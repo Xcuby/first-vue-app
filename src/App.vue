@@ -12,7 +12,7 @@
         target="_blank"
       >
         <v-card class="mr-">Profile joueur</v-card>
-      </v-btn>$
+      </v-btn>
     </v-app-bar>
 
     <v-content>
