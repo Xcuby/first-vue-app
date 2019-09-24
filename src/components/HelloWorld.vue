@@ -62,6 +62,7 @@ export default {
     reponse: '',
     valider: false,
     couleurText: '',
+    nombreDeFaute: 0,
     image: [
       {
         src: require('@/assets/bugatti.jpg'),
@@ -184,6 +185,7 @@ export default {
         if (c === true) {
           return 'green'
         } else {
+          this.nombreDeFaute++
           return 'red'
         }
       } else {
@@ -197,6 +199,7 @@ export default {
           this.couleurText = 'green'
           return ''
         } else {
+          this.nombreDeFaute++
           this.couleurText = 'red'
           return ''
         }
