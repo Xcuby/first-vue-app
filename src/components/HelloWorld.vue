@@ -1,14 +1,20 @@
 <template>
   <v-container class="grey lighten-5">
-    <div class="text-center font-weight-medium" v-text="enonce[image[0].type].consigne"></div>
+    <div v-show="!fin" class="text-center font-weight-medium" v-text="enonce[image[0].type].consigne"></div>
+    <div v-show="fin" class="text-center display-4" v-text="Score()"></div>
+    <div v-show="fin" class="text-center display-1" v-text="intelligence[fauteFinal()].titre"></div>
+    <v-row align="center" justify="center">
+      <v-img v-show="fin" :src="intelligence[fauteFinal()].src" aspect-ratio="1" class="grey darken-4 " max-width="800" max-height="300"></v-img>
+    </v-row>
     <v-row justify:space arround>
       <template v-for="n in 4">
         <v-col :key="n">
           <v-hover v-slot:default="{ hover }">
             <v-card
+            v-show="!fin"
               class="pa-2"
               :color="image[n-1].color"
-              v-on:click="image[n-1].color = validationCard(image[n-1].reponse), changementQuestion (image, validationCard(image[n-1].reponse))"
+              v-on:click="image[n-1].color = validationCard(image[n-1].reponse), changementQuestion (image, image[n-1].color)"
               outlined
               tile
               :elevation="hover ? 0 : 19"
@@ -30,6 +36,7 @@
     <v-row justify:space arround>
       <v-col md="10">
         <v-text-field
+          v-show="montrerChampDeTexte(image[0].type)"
           :background-color="couleurText"
           v-model="reponse"
           @click="resetCouleur()"
@@ -39,7 +46,7 @@
         ></v-text-field>
       </v-col>
       <div class="my-3">
-        <v-btn x-large color="primary" @click="validation(), validationText(image[0].reponse), changementQuestion(image, couleurText)">Valider</v-btn>
+        <v-btn v-show="montrerChampDeTexte(image[0].type)" x-large color="primary" @click="validation(), validationText(image[0].reponse), changementQuestion(image, couleurText)">Valider</v-btn>
       </div>
     </v-row>
   </v-container>
@@ -55,7 +62,7 @@ export default {
       { consigne: 'Entrez le points communs entre ces différentes images, entrez votre réponse dans le champ de texte!' },
       {
         consigne:
-          'A votre avis de quand datent ces photos (elles ont toutes été prises à la même date), entrez votre réponse dans le champ de texte!'
+          'A votre avis de quelle année datent ces photos (elles ont toutes été prises à la même date), entrez votre réponse dans le champ de texte!'
       },
       { consigne: "Quel est la personne (ou objet) la plus âgée (ou le plus ancien), cliquez directement sur l'image!" }
     ],
@@ -63,6 +70,7 @@ export default {
     valider: false,
     couleurText: '',
     nombreDeFaute: 0,
+    fin: false,
     image: [
       {
         src: require('@/assets/bugatti.jpg'),
@@ -164,6 +172,52 @@ export default {
         color: '',
         reponse: false
       }
+    ],
+    intelligence: [
+      {
+        src: require('@/assets/YagamiLight.jpeg'),
+        titre: "Tu as l'intelligence de Yagami Light de Death Note.\nTu as un QI de 300!!!"
+      },
+      {
+        src: require('@/assets/SherlockHolmes.jpg'),
+        titre: "Tu as l'intelligence de Sherlock Holmes.\nTu as un QI de 260!!!!"
+      },
+      {
+        src: require('@/assets/Rick.jpg'),
+        titre: "Tu as l'intelligence de Rick de Rick & Morty.\nTu as un QI 220!!!"
+      },
+      {
+        src: require('@/assets/Yoda.jpg'),
+        titre: "Tu as l'intelligence de Yoda de Star Wars. \n Tu as un QI de 180!!!"
+      },
+      {
+        src: require('@/assets/Einstein.jpg'),
+        titre: "Tu as l'intelligence de Einstien. \n Tu as un QI de 160!!"
+      },
+      {
+        src: require('@/assets/Leonard.jpeg'),
+        titre: "Tu as l'intelligence de Leonard de The Big Bang theory. \n Tu as un QI de 140!!"
+      },
+      {
+        src: require('@/assets/MorganFreeman.jpg'),
+        titre: "Tu as l'intelligence de Morgan Freeman. \n Tu as un QI de 130!"
+      },
+      {
+        src: require('@/assets/Saitama.png'),
+        titre: "Tu as l'intelligence de Saitama de One punch man. \n Tu as un QI de 90..."
+      },
+      {
+        src: require('@/assets/Reese.jpg'),
+        titre: "Tu as l'intelligence de Reese de Malcom. \n Tu as un QI de 70..."
+      },
+      {
+        src: require('@/assets/Junior.png'),
+        titre: "Tu as l'intelligence de Junior dans Ma famille d'abord. \n Tu as un QI de 50...."
+      },
+      {
+        src: require('@/assets/Homer.jpg'),
+        titre: "Tu as l'intelligence d'Homer dans les Simpson. \n Tu as un QI de 30......."
+      }
     ]
   }),
   methods: {
@@ -186,6 +240,7 @@ export default {
           return 'green'
         } else {
           this.nombreDeFaute++
+          console.log(this.nombreDeFaute)
           return 'red'
         }
       } else {
@@ -193,7 +248,6 @@ export default {
       }
     },
     validationText (c) {
-      console.log(c)
       if (typeof c === 'string' && this.valider === true) {
         if (c === this.reponse.toLowerCase()) {
           this.couleurText = 'green'
@@ -213,6 +267,9 @@ export default {
         this.couleurText = ''
         this.reponse = ''
         return ''
+      } else if (liste.length === 4 && couleur === 'green') {
+        console.log('test')
+        this.fin = true
       }
     },
     validation () {
@@ -221,6 +278,24 @@ export default {
     resetCouleur () {
       this.couleurText = ''
       return ''
+    },
+    montrerChampDeTexte (type) {
+      if (this.fin || type === 0 || type === 3) {
+        return false
+      } else {
+        return true
+      }
+    },
+    Score () {
+      const fautes = this.nombreDeFaute
+      return 'Vous avez fait ' + fautes + ' faute(s) !'
+    },
+    fauteFinal () {
+      if (this.nombreDeFaute > 10) {
+        return 10
+      } else {
+        return this.nombreDeFaute
+      }
     }
   }
 }
