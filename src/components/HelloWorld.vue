@@ -171,9 +171,6 @@ export default {
         titre: 'Première machine de Turing (créé par Alain Turing)',
         color: '',
         reponse: false
-      },
-      {
-        src: require('@/assets/')
       }
     ],
     intelligence: [

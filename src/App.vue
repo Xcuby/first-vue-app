@@ -3,7 +3,7 @@
     <v-app-bar app>
       <v-toolbar-title class="headline text-uppercase">
         <span>4 images :</span>
-        <span class="font-weight-light">  test de culture générale</span>
+        <span class="font-weight-light">  test de culture générale/QI</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn
