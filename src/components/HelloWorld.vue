@@ -2,10 +2,10 @@
   <v-container class="grey lighten-5">
     <div v-show="!fin" class="text-center font-weight-medium" v-text="enonce[image[0].type].consigne"></div>
     <div v-show="fin" class="text-center display-4" v-text="Score()"></div>
-    <div v-show="fin" class="text-center display-1" v-text="intelligence[fauteFinal()].titre"></div>
     <v-row align="center" justify="center">
-      <v-img v-show="fin" :src="intelligence[fauteFinal()].src" aspect-ratio="1" class="grey darken-4 " max-width="800" max-height="300"></v-img>
+      <v-img v-show="fin" :src="intelligence[fauteFinal()].src" aspect-ratio="1" class="grey darken-4 " max-width="1000" max-height="500"></v-img>
     </v-row>
+    <div v-show="fin" class="text-center display-1" v-text="intelligence[fauteFinal()].titre"></div>
     <v-row justify:space arround>
       <template v-for="n in 4">
         <v-col :key="n">
@@ -171,6 +171,9 @@ export default {
         titre: 'Première machine de Turing (créé par Alain Turing)',
         color: '',
         reponse: false
+      },
+      {
+        src: require('@/assets/')
       }
     ],
     intelligence: [
