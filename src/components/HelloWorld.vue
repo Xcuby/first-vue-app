@@ -172,6 +172,31 @@ export default {
         titre: 'Première machine de Turing (créé par Alain Turing)',
         color: '',
         reponse: false
+      },
+      {
+        src: require('@/assets/Lincoln.jpg'),
+        titre: 'Abraham Lincoln',
+        color: '',
+        type: 4,
+        reponse: false
+      },
+      {
+        src: require('@/assets/Roosevelt.jpg'),
+        titre: 'Theodore Roosevelt',
+        color: '',
+        reponse: false
+      },
+      {
+        src: require('@/assets/Washinghton.jpg'),
+        titre: 'George Washinghton',
+        color: '',
+        reponse: true
+      },
+      {
+        src: require('@/assets/Kennedy.jpg'),
+        titre: 'John Fitzgerald Kennedy',
+        color: '',
+        reponse: false
       }
     ],
     intelligence: [
