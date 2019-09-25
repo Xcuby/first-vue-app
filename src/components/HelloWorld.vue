@@ -14,7 +14,7 @@
             v-show="!fin"
               class="pa-2"
               :color="image[n-1].color"
-              v-on:click="image[n-1].color = validationCard(image[n-1].reponse), changementQuestion (image, image[n-1].color)"
+              v-on:click="image[n-1].color = validationCard(image[n-1]), changementQuestion (image, image[n-1].color)"
               outlined
               tile
               :elevation="hover ? 0 : 19"
@@ -64,7 +64,8 @@ export default {
         consigne:
           'A votre avis de quelle année datent ces photos (elles ont toutes été prises à la même date), entrez votre réponse dans le champ de texte!'
       },
-      { consigne: "Quel est la personne (ou objet) la plus âgée (ou le plus ancien), cliquez directement sur l'image!" }
+      { consigne: "Quel est la personne (ou objet) la plus âgée (ou le plus ancien), cliquez directement sur l'image!" },
+      { consigne: 'Qui est le premier président des Etats-Unis?' }
     ],
     reponse: '',
     valider: false,
@@ -235,16 +236,17 @@ export default {
         })
     },
     validationCard (c) {
-      if (typeof c === 'boolean') {
-        if (c === true) {
+      if (typeof c.reponse === 'boolean') {
+        if (c.reponse === true) {
           return 'green'
         } else {
-          this.nombreDeFaute++
-          console.log(this.nombreDeFaute)
-          return 'red'
+          if (c.color === '') {
+            this.nombreDeFaute++
+            return 'red'
+          } else {
+            return ''
+          }
         }
-      } else {
-        return ''
       }
     },
     validationText (c) {
@@ -288,7 +290,7 @@ export default {
     },
     Score () {
       const fautes = this.nombreDeFaute
-      return 'Vous avez fait ' + fautes + ' faute(s) !'
+      return fautes + ' faute(s) !'
     },
     fauteFinal () {
       if (this.nombreDeFaute > 10) {
