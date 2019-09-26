@@ -1,6 +1,6 @@
 <template>
   <v-container class="grey lighten-5">
-    <div v-show="!fin" class="text-center font-weight-medium" v-text="enonce[image[0].type].consigne"></div>
+    <div v-show="!fin" class="text-center display-1" v-text="enonce[image[0].type].consigne"></div>
     <div v-show="fin" class="text-center display-4" v-text="Score()"></div>
     <v-row align="center" justify="center">
       <v-img v-show="fin" :src="intelligence[fauteFinal()].src" aspect-ratio="1" class="grey darken-4 " max-width="1000" max-height="500"></v-img>
@@ -65,7 +65,8 @@ export default {
           'A votre avis de quelle année datent ces photos (elles ont toutes été prises à la même date), entrez votre réponse dans le champ de texte!'
       },
       { consigne: "Quel est la personne (ou objet) la plus âgée (ou le plus ancien), cliquez directement sur l'image!" },
-      { consigne: 'Qui est le premier président des Etats-Unis?' }
+      { consigne: 'Qui est le premier président des Etats-Unis?' },
+      { consigne: 'Où Abraham Lincoln a t-il été assassiné?' }
     ],
     reponse: '',
     valider: false,
@@ -195,6 +196,31 @@ export default {
       {
         src: require('@/assets/Kennedy.jpg'),
         titre: 'John Fitzgerald Kennedy',
+        color: '',
+        reponse: false
+      },
+      {
+        src: require('@/assets/theatre.jpg'),
+        titre: 'Dans un théatre',
+        color: '',
+        type: 5,
+        reponse: true
+      },
+      {
+        src: require('@/assets/Bureau_oval.jpg'),
+        titre: 'Dans le bureau ovale',
+        color: '',
+        reponse: false
+      },
+      {
+        src: require('@/assets/baignoire.jpg'),
+        titre: 'Dans sa baignoire',
+        color: '',
+        reponse: false
+      },
+      {
+        src: require('@/assets/parade.jpg'),
+        titre: "Lors d'un défilé public",
         color: '',
         reponse: false
       }
