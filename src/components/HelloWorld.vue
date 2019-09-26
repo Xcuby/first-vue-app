@@ -36,7 +36,7 @@
     <v-row justify:space arround>
       <v-col md="10">
         <v-text-field
-          v-show="montrerChampDeTexte(image[0].type)"
+          v-show="montrerChampDeTexte(image[0].reponse)"
           :background-color="couleurText"
           v-model="reponse"
           @click="resetCouleur()"
@@ -46,7 +46,7 @@
         ></v-text-field>
       </v-col>
       <div class="my-3">
-        <v-btn v-show="montrerChampDeTexte(image[0].type)" x-large color="primary" @click="validation(), validationText(image[0].reponse), changementQuestion(image, couleurText)">Valider</v-btn>
+        <v-btn v-show="montrerChampDeTexte(image[0].reponse)" x-large color="primary" @click="validation(), validationText(image[0].reponse), changementQuestion(image, couleurText)">Valider</v-btn>
       </div>
     </v-row>
   </v-container>
@@ -66,7 +66,8 @@ export default {
       },
       { consigne: "Quel est la personne (ou objet) la plus âgée (ou le plus ancien), cliquez directement sur l'image!" },
       { consigne: 'Qui est le premier président des Etats-Unis?' },
-      { consigne: 'Où Abraham Lincoln a t-il été assassiné?' }
+      { consigne: 'Où Abraham Lincoln a t-il été assassiné?' },
+      { consigne: 'Quand a eu lieu la bataille du Chemin des Dames?' }
     ],
     reponse: '',
     valider: false,
@@ -223,6 +224,31 @@ export default {
         titre: "Lors d'un défilé public",
         color: '',
         reponse: false
+      },
+      {
+        src: require('@/assets/guerreAlgérie.jpg'),
+        titre: "Guerre d'Algérie",
+        color: '',
+        type: 6,
+        reponse: false
+      },
+      {
+        src: require('@/assets/guerreDeSécession.jpg'),
+        titre: 'Guerre de Sécession',
+        color: '',
+        reponse: false
+      },
+      {
+        src: require('@/assets/1ereGuerreMondiale.jpg'),
+        titre: 'Première guerre mondiale',
+        color: '',
+        reponse: true
+      },
+      {
+        src: require('@/assets/2ndGuerreMondiale.jpg'),
+        titre: 'Second guerre mondiale',
+        color: '',
+        reponse: false
       }
     ],
     intelligence: [
@@ -244,7 +270,7 @@ export default {
       },
       {
         src: require('@/assets/Einstein.jpg'),
-        titre: "Tu as l'intelligence de Einstien. \n Tu as un QI de 160!!"
+        titre: "Tu as l'intelligence de Einstein. \n Tu as un QI de 160!!"
       },
       {
         src: require('@/assets/Leonard.jpeg'),
@@ -332,8 +358,8 @@ export default {
       this.couleurText = ''
       return ''
     },
-    montrerChampDeTexte (type) {
-      if (this.fin || type === 0 || type === 3) {
+    montrerChampDeTexte (resp) {
+      if (this.fin || typeof resp === 'boolean') {
         return false
       } else {
         return true
