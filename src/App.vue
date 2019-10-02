@@ -11,7 +11,7 @@
         href="https://github.com/vuetifyjs/vuetify/releases/latest"
         target="_blank"
       >
-        <v-card class="mr-">Profile joueur</v-card>
+        <v-card class="mr-">Profil joueur</v-card>
       </v-btn>
     </v-app-bar>
 
@@ -30,7 +30,7 @@ export default {
     HelloWorld
   },
   data: () => ({
-    //
+    async logout()
   })
 }
 </script>
