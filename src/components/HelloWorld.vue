@@ -59,17 +59,17 @@
     <v-row justify:space arround>
       <v-col md="10">
         <v-text-field
-          v-show="montrerChampDeTexte(image[0].reponse) && log"
+          v-show="montrerChampDeTexte(image[0 + m].reponse) && log"
           :background-color="couleurText"
           v-model="reponse"
           @click="resetCouleur()"
-          @keyup.enter="validation(), validationText(image[0].reponse), changementQuestion(image, couleurText)"
+          @keyup.enter="validation(), validationText(image[0 + m].reponse), changementQuestion(image, couleurText)"
           label="Entrez votre réponse"
           filled
         ></v-text-field>
       </v-col>
       <div class="my-3">
-        <v-btn v-show="montrerChampDeTexte(image[0].reponse) && log" x-large color="primary" @click="validation(), validationText(image[0].reponse), changementQuestion(image, couleurText)">Valider</v-btn>
+        <v-btn v-show="montrerChampDeTexte(image[0 + m].reponse) && log" x-large color="primary" @click="validation(), validationText(image[0 + m].reponse), changementQuestion(image, couleurText)">Valider</v-btn>
       </div>
     </v-row>
   </v-container>
@@ -382,16 +382,20 @@ export default {
       }
     },
     changementQuestion (liste, couleur) {
-      if (couleur === 'green' && liste.length > 4) {
-        /* for (var i = 0; i < 4; i++) {
-          liste.shift()
-        } */
+      if (couleur === 'green' && liste.length - this.m > 4) {
+        for (var i = 0; i < 4; i++) {
+          liste[i + this.m].color = ''
+        }
         this.m = this.m + 4
         this.couleurText = ''
         this.reponse = ''
         return ''
       } else if (liste.length === 4 && couleur === 'green') {
         this.fin = true
+        for (var j = 0; j < 4; j++) {
+          liste[i + this.m].color = ''
+        }
+        return ''
       }
     },
     validation () {
