@@ -17,7 +17,7 @@
           ></v-text-field>
       <v-text-field
             v-model="mdp"
-            :append-icon="show_mdp ? 'visibility' : 'visibility_off'"
+            :append-icon="show_mdp ? 'Cacher' : 'Afficher'"
             :rules="[rules_mdp.required, rules_mdp.min]"
             :type="show_mdp ? 'text' : 'password'"
             name="input-10-1"
