@@ -20,9 +20,8 @@
             :append-icon="show_mdp ? 'Cacher' : 'Afficher'"
             :rules="[rules_mdp.required, rules_mdp.min]"
             :type="show_mdp ? 'text' : 'password'"
-            name="input-10-1"
             label="Mot de passe"
-            hint="At least 8 characters"
+            hint="Au moins 4 caracteres"
             counter
             @click:append="show_mdp = !show_mdp"
           ></v-text-field>
@@ -111,8 +110,8 @@ export default {
     show_mdp: false,
     url: 'http://localhost:4000',
     rules_mdp: {
-      required: value => !!value || 'Required.',
-      min: v => v.length >= 8 || 'Min 8 characters',
+      required: value => !!value || 'Champ requis',
+      min: v => v.length >= 4 || 'Min 4 caracteres'
     },
     image: [
       {
