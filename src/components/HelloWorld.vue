@@ -16,9 +16,15 @@
           v-model="identifiant"
           ></v-text-field>
       <v-text-field
-          label="Mot de passe"
-          filled
-          v-model="mdp"
+            v-model="mdp"
+            :append-icon="show_mdp ? 'visibility' : 'visibility_off'"
+            :rules="[rules_mdp.required, rules_mdp.min]"
+            :type="show_mdp ? 'text' : 'password'"
+            name="input-10-1"
+            label="Mot de passe"
+            hint="At least 8 characters"
+            counter
+            @click:append="show_mdp = !show_mdp"
           ></v-text-field>
       <v-btn @click="login">Connexion</v-btn>
       <v-btn @click="addLog">Inscription</v-btn>
@@ -102,7 +108,12 @@ export default {
     fin: false,
     log: false,
     m: 0,
+    show_mdp: false,
     url: 'http://localhost:4000',
+    rules_mdp: {
+      required: value => !!value || 'Required.',
+      min: v => v.length >= 8 || 'Min 8 characters',
+    },
     image: [
       {
         src: require('@/assets/bugatti.jpg'),
@@ -352,6 +363,7 @@ export default {
         this.log = false
         this.m = 0
         this.nombreDeFaute = 0
+        this.fin = false
       }
       console.log('response is:', response)
     },
@@ -390,10 +402,10 @@ export default {
         this.couleurText = ''
         this.reponse = ''
         return ''
-      } else if (liste.length === 4 && couleur === 'green') {
+      } else if (liste.length - this.m === 4 && couleur === 'green') {
         this.fin = true
         for (var j = 0; j < 4; j++) {
-          liste[i + this.m].color = ''
+          liste[j + this.m].color = ''
         }
         return ''
       }
