@@ -31,7 +31,8 @@ app.use(express.static(path.join(__dirname, 'dist/')))
 
 const users = [{
   username: 'admin',
-  password: 'changethispassword'
+  password: 'Xav',
+  meilleur_score: 0
 }]
 
 app.post('/api/login', (req, res) => {
@@ -47,7 +48,8 @@ app.post('/api/login', (req, res) => {
       // connect the user
       req.session.userId = 1000 // connect the user, and change the id
       res.json({
-        message: 'connected'
+        message: 'connected',
+        meilleur_score_utilisateur: user.meilleur_score
       })
     }
   } else {
@@ -57,12 +59,15 @@ app.post('/api/login', (req, res) => {
   }
 })
 
+app.get('/api/')
+
 app.post('/api/addLog', (req, res) => {
   const user = users.find(u => u.username === req.body.login && u.password === req.body.password)
   if (!user) {
     users.push({
       username: req.body.login,
-      password: req.body.password
+      password: req.body.password,
+      meilleur_score: null
     })
     res.json({
       message: 'user created succesfull'
@@ -76,7 +81,6 @@ app.post('/api/addLog', (req, res) => {
 
 app.get('/api/logout', (req, res) => {
   if (!req.session.userId) {
-    res.status(401)
     res.json({
       message: 'you are already disconnected'
     })
@@ -92,7 +96,6 @@ app.get('/api/admin', (req, res) => {
   if (!req.session.userId || req.session.isAdmin === false) {
     res.status(401)
     res.json({ message: 'Unauthorized' })
-    return
   }
 
   res.json({

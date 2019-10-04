@@ -15,7 +15,6 @@
           filled
           v-model="identifiant"
           :rules="[rules_mdp_id.required, rules_mdp_id.min]"
-          :type="show_mdp ? 'text' : 'password'"
           hint="Au moins 4 caracteres"
           counter
           ></v-text-field>
@@ -31,6 +30,7 @@
           ></v-text-field>
       <v-btn @click="login">Connexion</v-btn>
       <v-btn @click="addLog">Inscription</v-btn>
+      <v-alert v-show="alerte_connexion" outlined class="text-center font-weight-medium" type="error" v-text="message_connexion"></v-alert>
     </div>
     <div v-show="!fin && log" class="text-center display-1" v-text="enonce[image[0].type].consigne"></div>
     <div v-show="fin && log" class="text-center display-4" v-text="Score()"></div>
@@ -112,11 +112,14 @@ export default {
     log: false,
     m: 0,
     show_mdp: false,
+    alerte_connexion: false,
     url: 'http://localhost:4000',
     rules_mdp_id: {
       required: value => !!value || 'Champ requis',
       min: v => v.length >= 4 || 'Min 4 caracteres'
     },
+    message_connexion: '',
+    meilleur_score: 0,
     image: [
       {
         src: require('@/assets/bugatti.jpg'),
@@ -348,8 +351,11 @@ export default {
         login: this.identifiant,
         password: this.mdp
       })
+      this.alerte_connexion = true
       if (response.data.message === 'connected') {
         this.log = true
+      } else if (response.data.message === "user doesn't exist") {
+        this.message_connexion = "Nom d'utilisateur ou mot de passe incorecte"
       }
       console.log('response is:', response)
     },
@@ -358,6 +364,12 @@ export default {
         login: this.identifiant,
         password: this.mdp
       })
+      this.alerte_connexion = true
+      if (response.data.message === 'user created succesfull') {
+        this.message_connexion = 'Votre profil a été créé avec succès, vous pouvez maintenant vous connecter!'
+      } else if (response.data.message === 'user already exist, please enter new id') {
+        this.message_connexion = "Ce nom d'utilisateur est déjà utilisé, veuillez en utiliser un nouveau!"
+      }
       console.log('response is:', response)
     },
     async logout () {
@@ -367,6 +379,9 @@ export default {
         this.m = 0
         this.nombreDeFaute = 0
         this.fin = false
+      } else if (response.data.message === 'you are already disconnected') {
+        this.alerte_connexion = true
+        this.message_connexion = 'Vous êtes déjà déconnecté'
       }
       console.log('response is:', response)
     },
