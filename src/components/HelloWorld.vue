@@ -1,32 +1,55 @@
 <template>
+  <v-app>
+    <v-app-bar app>
+      <v-toolbar-title class="headline text-uppercase">
+        <span>4 images :</span>
+        <span class="font-weight-light">  test de culture générale/QI</span>
+      </v-toolbar-title>
+      <v-spacer></v-spacer>
+        <v-btn @click="logout">Déconnexion</v-btn>
+    </v-app-bar>
   <v-container class="grey lighten-5">
-    <div v-show="!fin" class="text-center display-1" v-text="enonce[image[0].type].consigne"></div>
-    <div v-show="fin" class="text-center display-4" v-text="Score()"></div>
+    <div v-show="!log">
+      <v-text-field
+          label="Identifiant"
+          filled
+          v-model="identifiant"
+          ></v-text-field>
+      <v-text-field
+          label="Mot de passe"
+          filled
+          v-model="mdp"
+          ></v-text-field>
+      <v-btn @click="login">Connexion</v-btn>
+      <v-btn @click="addLog">Inscription</v-btn>
+    </div>
+    <div v-show="!fin && log" class="text-center display-1" v-text="enonce[image[0].type].consigne"></div>
+    <div v-show="fin && log" class="text-center display-4" v-text="Score()"></div>
     <v-row align="center" justify="center">
-      <v-img v-show="fin" :src="intelligence[fauteFinal()].src" aspect-ratio="1" class="grey darken-4 " max-width="1000" max-height="500"></v-img>
+      <v-img v-show="fin && log" :src="intelligence[fauteFinal()].src" aspect-ratio="1" class="grey darken-4 " max-width="1000" max-height="500"></v-img>
     </v-row>
-    <div v-show="fin" class="text-center display-1" v-text="intelligence[fauteFinal()].titre"></div>
+    <div v-show="fin && log" class="text-center display-1" v-text="intelligence[fauteFinal()].titre"></div>
     <v-row justify:space arround>
       <template v-for="n in 4">
         <v-col :key="n">
           <v-hover v-slot:default="{ hover }">
             <v-card
-            v-show="!fin"
+              v-show="!fin && log"
               class="pa-2"
-              :color="image[n-1].color"
-              v-on:click="image[n-1].color = validationCard(image[n-1]), changementQuestion (image, image[n-1].color)"
+              :color="image[n-1+m].color"
+              v-on:click="image[n-1+m].color = validationCard(image[n-1+m]), changementQuestion (image, image[n-1+m].color)"
               outlined
               tile
               :elevation="hover ? 0 : 19"
             >
               <v-img
-                :src="image[n-1].src"
+                :src="image[n-1+m].src"
                 aspect-ratio="1"
                 class="grey lighten-2"
                 max-width="600"
                 max-height="215"
               ></v-img>
-              <div class="text-center font-weight-medium" v-text="image[n-1].titre"></div>
+              <div class="text-center font-weight-medium" v-text="image[n-1+m].titre"></div>
             </v-card>
           </v-hover>
         </v-col>
@@ -36,7 +59,7 @@
     <v-row justify:space arround>
       <v-col md="10">
         <v-text-field
-          v-show="montrerChampDeTexte(image[0].reponse)"
+          v-show="montrerChampDeTexte(image[0].reponse) && log"
           :background-color="couleurText"
           v-model="reponse"
           @click="resetCouleur()"
@@ -46,10 +69,11 @@
         ></v-text-field>
       </v-col>
       <div class="my-3">
-        <v-btn v-show="montrerChampDeTexte(image[0].reponse)" x-large color="primary" @click="validation(), validationText(image[0].reponse), changementQuestion(image, couleurText)">Valider</v-btn>
+        <v-btn v-show="montrerChampDeTexte(image[0].reponse) && log" x-large color="primary" @click="validation(), validationText(image[0].reponse), changementQuestion(image, couleurText)">Valider</v-btn>
       </div>
     </v-row>
   </v-container>
+  </v-app>
 </template>
 
 <script>
@@ -70,10 +94,15 @@ export default {
       { consigne: 'Quand a eu lieu la bataille du Chemin des Dames?' }
     ],
     reponse: '',
+    identifiant: '',
+    mdp: '',
     valider: false,
     couleurText: '',
     nombreDeFaute: 0,
     fin: false,
+    log: false,
+    m: 0,
+    url: 'http://localhost:4000',
     image: [
       {
         src: require('@/assets/bugatti.jpg'),
@@ -299,18 +328,32 @@ export default {
     ]
   }),
   methods: {
-    login () {
-      // connecter utilisateur
-      fetch('http://localhost:4000/api/login', {
-        method: 'POST',
-        body: { login: xav }
+    async login () {
+      // connecter l'utilisateur
+      const response = await this.axios.post(this.url + '/api/login', {
+        login: this.identifiant,
+        password: this.mdp
       })
-        .then(response => {
-          console.log('response is:', response)
-        })
-        .then(jsondata => {
-          console.log('response is:', jsondata)
-        })
+      if (response.data.message === 'connected') {
+        this.log = true
+      }
+      console.log('response is:', response)
+    },
+    async addLog () {
+      const response = await this.axios.post(this.url + '/api/addLog', {
+        login: this.identifiant,
+        password: this.mdp
+      })
+      console.log('response is:', response)
+    },
+    async logout () {
+      const response = await this.axios.get(this.url + '/api/logout')
+      if (response.data.message === 'you are now disconnected') {
+        this.log = false
+        this.m = 0
+        this.nombreDeFaute = 0
+      }
+      console.log('response is:', response)
     },
     validationCard (c) {
       if (typeof c.reponse === 'boolean') {
@@ -340,14 +383,14 @@ export default {
     },
     changementQuestion (liste, couleur) {
       if (couleur === 'green' && liste.length > 4) {
-        for (var i = 0; i < 4; i++) {
+        /* for (var i = 0; i < 4; i++) {
           liste.shift()
-        }
+        } */
+        this.m = this.m + 4
         this.couleurText = ''
         this.reponse = ''
         return ''
       } else if (liste.length === 4 && couleur === 'green') {
-        console.log('test')
         this.fin = true
       }
     },
@@ -356,6 +399,7 @@ export default {
     },
     resetCouleur () {
       this.couleurText = ''
+      this.reponse = ''
       return ''
     },
     montrerChampDeTexte (resp) {
