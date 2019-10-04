@@ -14,11 +14,15 @@
           label="Identifiant"
           filled
           v-model="identifiant"
+          :rules="[rules_mdp_id.required, rules_mdp_id.min]"
+          :type="show_mdp ? 'text' : 'password'"
+          hint="Au moins 4 caracteres"
+          counter
           ></v-text-field>
       <v-text-field
             v-model="mdp"
             :append-icon="show_mdp ? 'Cacher' : 'Afficher'"
-            :rules="[rules_mdp.required, rules_mdp.min]"
+            :rules="[rules_mdp_id.required, rules_mdp_id.min]"
             :type="show_mdp ? 'text' : 'password'"
             label="Mot de passe"
             hint="Au moins 4 caracteres"
@@ -109,7 +113,7 @@ export default {
     m: 0,
     show_mdp: false,
     url: 'http://localhost:4000',
-    rules_mdp: {
+    rules_mdp_id: {
       required: value => !!value || 'Champ requis',
       min: v => v.length >= 4 || 'Min 4 caracteres'
     },
