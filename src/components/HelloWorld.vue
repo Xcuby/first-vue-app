@@ -9,7 +9,13 @@
         <v-btn @click="logout">Déconnexion</v-btn>
     </v-app-bar>
   <v-container class="grey lighten-5">
-    <div v-show="!log">
+    <div v-show="page_accueille">
+      <v-btn @click="page_connexion">Connectez-vous</v-btn>
+      <p>OU</p>
+      <v-btn @click="page_inscription">Inscrivez-vous</v-btn>
+    </div>
+    <div v-show="log">
+      <v-btn @click="retour_page_accueille">Retour</v-btn>
       <v-text-field
           label="Identifiant"
           filled
@@ -28,22 +34,27 @@
             counter
             @click:append="show_mdp = !show_mdp"
           ></v-text-field>
-      <v-btn @click="login">Connexion</v-btn>
-      <v-btn @click="addLog">Inscription</v-btn>
+      <v-btn @click="login" v-show="connexion">Connexion</v-btn>
+      <v-btn @click="addLog" v-show="inscription">Inscription</v-btn>
       <v-alert v-show="alerte_connexion" outlined class="text-center font-weight-medium" type="error" v-text="message_connexion"></v-alert>
     </div>
-    <div v-show="!fin && log" class="text-center display-1" v-text="enonce[image[0].type].consigne"></div>
-    <div v-show="fin && log" class="text-center display-4" v-text="Score()"></div>
+    <div v-show="profil">
+      <h1>Bienvenue, {{identifiant}}</h1>
+      <p>Votre meilleur score est de {{meilleur_score}} faute(s)</p>
+      <v-btn @click="Jouer">Jouer !</v-btn>
+    </div>
+    <div v-show="jouer" class="text-center display-1" v-text="enonce[image[0+m].type].consigne"></div>
+    <div v-show="fin" class="text-center display-4" v-text="Score()"></div>
     <v-row align="center" justify="center">
-      <v-img v-show="fin && log" :src="intelligence[fauteFinal()].src" aspect-ratio="1" class="grey darken-4 " max-width="1000" max-height="500"></v-img>
+      <v-img v-show="fin" :src="intelligence[fauteFinal()].src" aspect-ratio="1" class="grey darken-4 " max-width="1000" max-height="500"></v-img>
     </v-row>
-    <div v-show="fin && log" class="text-center display-1" v-text="intelligence[fauteFinal()].titre"></div>
+    <div v-show="fin" class="text-center display-1" v-text="intelligence[fauteFinal()].titre"></div>
     <v-row justify:space arround>
       <template v-for="n in 4">
         <v-col :key="n">
           <v-hover v-slot:default="{ hover }">
             <v-card
-              v-show="!fin && log"
+              v-show="jouer"
               class="pa-2"
               :color="image[n-1+m].color"
               v-on:click="image[n-1+m].color = validationCard(image[n-1+m]), changementQuestion (image, image[n-1+m].color)"
@@ -68,7 +79,7 @@
     <v-row justify:space arround>
       <v-col md="10">
         <v-text-field
-          v-show="montrerChampDeTexte(image[0 + m].reponse) && log"
+          v-show="montrerChampDeTexte(image[0 + m].reponse) && jouer"
           :background-color="couleurText"
           v-model="reponse"
           @click="resetCouleur()"
@@ -78,7 +89,7 @@
         ></v-text-field>
       </v-col>
       <div class="my-3">
-        <v-btn v-show="montrerChampDeTexte(image[0 + m].reponse) && log" x-large color="primary" @click="validation(), validationText(image[0 + m].reponse), changementQuestion(image, couleurText)">Valider</v-btn>
+        <v-btn v-show="montrerChampDeTexte(image[0 + m].reponse) && jouer" x-large color="primary" @click="validation(), validationText(image[0 + m].reponse), changementQuestion(image, couleurText)">Valider</v-btn>
       </div>
     </v-row>
   </v-container>
@@ -113,6 +124,11 @@ export default {
     m: 0,
     show_mdp: false,
     alerte_connexion: false,
+    page_accueille: true,
+    connexion: false,
+    inscription: false,
+    profil: false,
+    jouer: false,
     url: 'http://localhost:4000',
     rules_mdp_id: {
       required: value => !!value || 'Champ requis',
@@ -353,7 +369,9 @@ export default {
       })
       this.alerte_connexion = true
       if (response.data.message === 'connected') {
-        this.log = true
+        this.log = false
+        this.profil = true
+        this.meilleur_score = response.data.meilleur_score_utilisateur
       } else if (response.data.message === "user doesn't exist") {
         this.message_connexion = "Nom d'utilisateur ou mot de passe incorecte"
       }
@@ -364,6 +382,8 @@ export default {
         login: this.identifiant,
         password: this.mdp
       })
+      this.connexion = true
+      this.inscription = false
       this.alerte_connexion = true
       if (response.data.message === 'user created succesfull') {
         this.message_connexion = 'Votre profil a été créé avec succès, vous pouvez maintenant vous connecter!'
@@ -376,6 +396,8 @@ export default {
       const response = await this.axios.get(this.url + '/api/logout')
       if (response.data.message === 'you are now disconnected') {
         this.log = false
+        this.jouer = false
+        this.page_accueille = true
         this.m = 0
         this.nombreDeFaute = 0
         this.fin = false
@@ -422,6 +444,7 @@ export default {
         return ''
       } else if (liste.length - this.m === 4 && couleur === 'green') {
         this.fin = true
+        this.jouer = false
         for (var j = 0; j < 4; j++) {
           liste[j + this.m].color = ''
         }
@@ -453,6 +476,29 @@ export default {
       } else {
         return this.nombreDeFaute
       }
+    },
+    page_connexion () {
+      this.page_accueille = false
+      this.connexion = true
+      this.log = true
+    },
+
+    page_inscription () {
+      this.page_accueille = false
+      this.inscription = true
+      this.log = true
+    },
+
+    retour_page_accueille () {
+      this.page_accueille = true
+      this.inscription = false
+      this.connexion = false
+      this.log = false
+    },
+
+    Jouer () {
+      this.profil = false
+      this.jouer = true
     }
   }
 }
