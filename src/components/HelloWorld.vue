@@ -38,7 +38,7 @@
       <v-btn @click="addLog" v-show="inscription" block rounded color="primary">Inscription</v-btn>
     </div>
     <div>
-      <v-alert v-show="alerte_connexion" outlined class="text-center font-weight-medium" type="error" v-text="message_connexion"></v-alert>
+      <v-alert v-show="alerte_connexion" outlined class="text-center font-weight-medium" :type="type_alerte_connexion" v-text="message_connexion"></v-alert>
     </div>
     <div v-show="profil">
       <h1>Bienvenue, {{identifiant}}</h1>
@@ -131,6 +131,7 @@ export default {
     inscription: false,
     profil: false,
     jouer: false,
+    type_alerte_connexion: '',
     url: 'http://localhost:4000',
     rules_mdp_id: {
       required: value => !!value || 'Champ requis',
@@ -376,6 +377,7 @@ export default {
         this.alerte_connexion = false
         this.meilleur_score = response.data.meilleur_score_utilisateur
       } else if (response.data.message === "user doesn't exist") {
+        this.type_alerte_connexion = 'error'
         this.message_connexion = "Nom d'utilisateur ou mot de passe incorecte"
       }
       console.log('response is:', response)
@@ -385,13 +387,15 @@ export default {
         login: this.identifiant,
         password: this.mdp
       })
-      this.page_accueille = true
-      this.log = false
-      this.inscription = false
       this.alerte_connexion = true
       if (response.data.message === 'user created succesfull') {
+        this.page_accueille = true
+        this.log = false
+        this.inscription = false
+        this.type_alerte_connexion = 'success'
         this.message_connexion = 'Votre profil a été créé avec succès, vous pouvez maintenant vous connecter!'
       } else if (response.data.message === 'user already exist, please enter new id') {
+        this.type_alerte_connexion = 'error'
         this.message_connexion = "Ce nom d'utilisateur est déjà utilisé, veuillez en utiliser un nouveau!"
       }
       console.log('response is:', response)
