@@ -10,12 +10,12 @@
     </v-app-bar>
   <v-container class="grey lighten-5">
     <div v-show="page_accueille">
-      <v-btn @click="page_connexion">Connectez-vous</v-btn>
-      <p>OU</p>
-      <v-btn @click="page_inscription">Inscrivez-vous</v-btn>
+      <v-btn block rounded color='primary' @click="page_connexion" x-large>Connectez-vous</v-btn>
+      <p></p>
+      <v-btn block rounded color= 'secondary' @click="page_inscription" x-large>Inscrivez-vous</v-btn>
     </div>
     <div v-show="log">
-      <v-btn @click="retour_page_accueille">Retour</v-btn>
+      <v-btn @click="retour_page_accueille" rounded>Retour</v-btn>
       <v-text-field
           label="Identifiant"
           filled
@@ -34,8 +34,10 @@
             counter
             @click:append="show_mdp = !show_mdp"
           ></v-text-field>
-      <v-btn @click="login" v-show="connexion">Connexion</v-btn>
-      <v-btn @click="addLog" v-show="inscription">Inscription</v-btn>
+      <v-btn @click="login" v-show="connexion" block rounded color="primary">Connexion</v-btn>
+      <v-btn @click="addLog" v-show="inscription" block rounded color="primary">Inscription</v-btn>
+    </div>
+    <div>
       <v-alert v-show="alerte_connexion" outlined class="text-center font-weight-medium" type="error" v-text="message_connexion"></v-alert>
     </div>
     <div v-show="profil">
@@ -371,6 +373,7 @@ export default {
       if (response.data.message === 'connected') {
         this.log = false
         this.profil = true
+        this.alerte_connexion = false
         this.meilleur_score = response.data.meilleur_score_utilisateur
       } else if (response.data.message === "user doesn't exist") {
         this.message_connexion = "Nom d'utilisateur ou mot de passe incorecte"
@@ -382,7 +385,8 @@ export default {
         login: this.identifiant,
         password: this.mdp
       })
-      this.connexion = true
+      this.page_accueille = true
+      this.log = false
       this.inscription = false
       this.alerte_connexion = true
       if (response.data.message === 'user created succesfull') {
@@ -401,11 +405,8 @@ export default {
         this.m = 0
         this.nombreDeFaute = 0
         this.fin = false
-      } else if (response.data.message === 'you are already disconnected') {
-        this.alerte_connexion = true
-        this.message_connexion = 'Vous êtes déjà déconnecté'
+        console.log('response is:', response)
       }
-      console.log('response is:', response)
     },
     validationCard (c) {
       if (typeof c.reponse === 'boolean') {
