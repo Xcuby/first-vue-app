@@ -6,7 +6,7 @@
         <span class="font-weight-light">  test de culture générale/QI</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-        <v-btn v-show="!page_accueille && !connexion && !inscription" @click="logout">Déconnexion</v-btn>
+        <v-btn v-show="!page_accueille && !log" @click="logout">Déconnexion</v-btn>
     </v-app-bar>
   <v-container class="grey lighten-5">
     <div v-show="page_accueille">
@@ -38,7 +38,7 @@
       <v-btn @click="addLog" v-show="inscription" block rounded color="primary">Inscription</v-btn>
     </div>
     <div>
-      <v-alert v-show="alerte_connexion" outlined class="text-center font-weight-medium" type="type_alerte_connexion" v-text="message_connexion"></v-alert>
+      <v-alert v-show="alerte_connexion" outlined class="text-center font-weight-medium" v-text="message_connexion"></v-alert>
     </div>
     <div v-show="profil">
       <h1>Bienvenue, {{identifiant}}</h1>
@@ -52,7 +52,7 @@
       <v-img v-show="fin" :src="intelligence[fauteFinal()].src" aspect-ratio="1" class="grey darken-4 " max-width="1000" max-height="500"></v-img>
     </v-row>
     <div v-show="fin" class="text-center display-1" v-text="intelligence[fauteFinal()].titre"></div>
-    <v-btn v-show="fin" @click="retour_page_profile" block rounded color="primary">Terminer</v-btn>
+    <v-btn v-show="fin" @click="actualiser_score_utilisateur" block rounded color="primary">Terminer</v-btn>
     <v-row justify:space arround>
       <template v-for="n in 4">
         <v-col :key="n">
@@ -379,6 +379,11 @@ export default {
         this.profil = true
         this.alerte_connexion = false
         this.meilleur_score = response.data.meilleur_score_utilisateur
+        if (this.meilleur_score === null) {
+          this.message_score_profile = false
+        } else {
+          this.message_score_profile = true
+        }
       } else if (response.data.message === "user doesn't exist") {
         this.type_alerte_connexion = 'error'
         this.message_connexion = "Nom d'utilisateur ou mot de passe incorecte"
@@ -413,24 +418,34 @@ export default {
         this.m = 0
         this.nombreDeFaute = 0
         this.fin = false
+        this.page_accueille = true
         console.log('response is:', response)
       }
     },
 
-    async logout_init_connexion () {
-      const response = await this.axios.get(this.url + '/api/logout')
+    logout_init_connexion () {
       this.page_accueille = false
       this.connexion = true
       this.log = true
-      console.log('response is:', response)
     },
 
     async actualiser_score_utilisateur () {
-      const response = await this.axios.get(this.url + '/api/actualiser-score', {
-        meilleur_score: this.nombreDeFaute
-      })
+      console.log('response is:' + this.nombreDeFaute)
+      this.fin = false
+      this.profil = true
+      this.m = 0
+      this.meilleur_score = this.nombreDeFaute
       this.nombreDeFaute = 0
-      console.log('response is:', response)
+      await this.axios.post(this.url + '/api/score', {
+        login: this.identifiant,
+        password: this.mdp,
+        meilleur_score: this.meilleur_score
+      })
+      if (this.meilleur_score === null) {
+        this.message_score_profile = false
+      } else {
+        this.message_score_profile = true
+      }
     },
 
     validationCard (c) {
@@ -519,22 +534,9 @@ export default {
       this.mdp = ''
     },
 
-    retour_page_profile () {
-      this.fin = false
-      this.profil = true
-    },
-
     Jouer () {
       this.profil = false
       this.jouer = true
-    },
-
-    score_profile () {
-      if (this.meilleur_score === null) {
-        this.message_score_profile = false
-      } else {
-        this.message_score_profile = true
-      }
     }
   }
 }

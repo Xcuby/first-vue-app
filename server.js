@@ -61,9 +61,12 @@ app.post('/api/login', (req, res) => {
   }
 })
 
-app.post('/api/actualiser-score', (req, res) => {
+app.post('/api/score', (req, res) => {
   const user = users.find(u => u.username === req.body.login && u.password === req.body.password)
-  user.meilleur_score_utilisateur = req.body.meilleur_score
+  user.meilleur_score = req.body.meilleur_score
+  res.json({
+    message: users
+  })
 })
 
 app.post('/api/addLog', (req, res) => {
