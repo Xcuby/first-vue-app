@@ -419,6 +419,9 @@ export default {
         this.nombreDeFaute = 0
         this.fin = false
         this.page_accueille = true
+        this.profil = false
+        this.connexion = false
+        this.inscription = false
         console.log('response is:', response)
       }
     },
@@ -430,22 +433,29 @@ export default {
     },
 
     async actualiser_score_utilisateur () {
-      console.log('response is:' + this.nombreDeFaute)
       this.fin = false
       this.profil = true
       this.m = 0
-      this.meilleur_score = this.nombreDeFaute
-      this.nombreDeFaute = 0
-      await this.axios.post(this.url + '/api/score', {
-        login: this.identifiant,
-        password: this.mdp,
-        meilleur_score: this.meilleur_score
-      })
-      if (this.meilleur_score === null) {
+      if ((this.meilleur_score != null && this.meilleur_score > this.nombreDeFaute)) {
         this.message_score_profile = false
-      } else {
+        this.meilleur_score = this.nombreDeFaute
+        const response = await this.axios.post(this.url + '/api/score', {
+          login: this.identifiant,
+          password: this.mdp,
+          meilleur_score: this.meilleur_score
+        })
+        console.log('response is:', response)
+      } else if (this.meilleur_score === null) {
         this.message_score_profile = true
+        this.meilleur_score = this.nombreDeFaute
+        const response = await this.axios.post(this.url + '/api/score', {
+          login: this.identifiant,
+          password: this.mdp,
+          meilleur_score: this.meilleur_score
+        })
+        console.log('response is:', response)
       }
+      this.nombreDeFaute = 0
     },
 
     validationCard (c) {
