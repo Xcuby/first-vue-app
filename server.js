@@ -41,6 +41,7 @@ app.post('/api/login', (req, res) => {
   if (!req.session.userId) {
     const user = users.find(u => u.username === req.body.login && u.password === req.body.password)
     if (!user) {
+      res.status(401)
       res.json({
         message: "user doesn't exist"
       })
@@ -53,13 +54,17 @@ app.post('/api/login', (req, res) => {
       })
     }
   } else {
+    res.status(401)
     res.json({
       message: 'you are already connected'
     })
   }
 })
 
-app.get('/api/')
+app.post('/api/actualiser-score', (req, res) => {
+  const user = users.find(u => u.username === req.body.login && u.password === req.body.password)
+  user.meilleur_score_utilisateur = req.body.meilleur_score
+})
 
 app.post('/api/addLog', (req, res) => {
   const user = users.find(u => u.username === req.body.login && u.password === req.body.password)
@@ -81,6 +86,7 @@ app.post('/api/addLog', (req, res) => {
 
 app.get('/api/logout', (req, res) => {
   if (!req.session.userId) {
+    res.status(401)
     res.json({
       message: 'you are already disconnected'
     })

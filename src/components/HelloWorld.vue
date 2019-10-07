@@ -6,11 +6,11 @@
         <span class="font-weight-light">  test de culture générale/QI</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-        <v-btn @click="logout">Déconnexion</v-btn>
+        <v-btn v-show="!page_accueille && !connexion && !inscription" @click="logout">Déconnexion</v-btn>
     </v-app-bar>
   <v-container class="grey lighten-5">
     <div v-show="page_accueille">
-      <v-btn block rounded color='primary' @click="page_connexion" x-large>Connectez-vous</v-btn>
+      <v-btn block rounded color='primary' @click="logout_init_connexion" x-large>Connectez-vous</v-btn>
       <p></p>
       <v-btn block rounded color= 'secondary' @click="page_inscription" x-large>Inscrivez-vous</v-btn>
     </div>
@@ -38,11 +38,12 @@
       <v-btn @click="addLog" v-show="inscription" block rounded color="primary">Inscription</v-btn>
     </div>
     <div>
-      <v-alert v-show="alerte_connexion" outlined class="text-center font-weight-medium" :type="type_alerte_connexion" v-text="message_connexion"></v-alert>
+      <v-alert v-show="alerte_connexion" outlined class="text-center font-weight-medium" type="type_alerte_connexion" v-text="message_connexion"></v-alert>
     </div>
     <div v-show="profil">
       <h1>Bienvenue, {{identifiant}}</h1>
-      <p>Votre meilleur score est de {{meilleur_score}} faute(s)</p>
+      <p v-show="message_score_profile">Votre meilleur score est de {{meilleur_score}} faute(s)</p>
+      <p v-show="!message_score_profile">Vous n'avez pas encore de meilleur score, jouer au moins une fois pour en avoir un!</p>
       <v-btn @click="Jouer">Jouer !</v-btn>
     </div>
     <div v-show="jouer" class="text-center display-1" v-text="enonce[image[0+m].type].consigne"></div>
@@ -51,6 +52,7 @@
       <v-img v-show="fin" :src="intelligence[fauteFinal()].src" aspect-ratio="1" class="grey darken-4 " max-width="1000" max-height="500"></v-img>
     </v-row>
     <div v-show="fin" class="text-center display-1" v-text="intelligence[fauteFinal()].titre"></div>
+    <v-btn v-show="fin" @click="retour_page_profile" block rounded color="primary">Terminer</v-btn>
     <v-row justify:space arround>
       <template v-for="n in 4">
         <v-col :key="n">
@@ -131,6 +133,7 @@ export default {
     inscription: false,
     profil: false,
     jouer: false,
+    message_score_profile: false,
     type_alerte_connexion: '',
     url: 'http://localhost:4000',
     rules_mdp_id: {
@@ -319,11 +322,11 @@ export default {
     intelligence: [
       {
         src: require('@/assets/YagamiLight.jpeg'),
-        titre: "Tu as l'intelligence de Yagami Light de Death Note.\nTu as un QI de 300!!!"
+        titre: "Tu as l'intelligence de Yagami Light de Death Note.\nTu as un QI de 300!!!!"
       },
       {
         src: require('@/assets/SherlockHolmes.jpg'),
-        titre: "Tu as l'intelligence de Sherlock Holmes.\nTu as un QI de 260!!!!"
+        titre: "Tu as l'intelligence de Sherlock Holmes.\nTu as un QI de 260!!!"
       },
       {
         src: require('@/assets/Rick.jpg'),
@@ -394,6 +397,8 @@ export default {
         this.inscription = false
         this.type_alerte_connexion = 'success'
         this.message_connexion = 'Votre profil a été créé avec succès, vous pouvez maintenant vous connecter!'
+        this.identifiant = ''
+        this.mdp = ''
       } else if (response.data.message === 'user already exist, please enter new id') {
         this.type_alerte_connexion = 'error'
         this.message_connexion = "Ce nom d'utilisateur est déjà utilisé, veuillez en utiliser un nouveau!"
@@ -405,13 +410,29 @@ export default {
       if (response.data.message === 'you are now disconnected') {
         this.log = false
         this.jouer = false
-        this.page_accueille = true
         this.m = 0
         this.nombreDeFaute = 0
         this.fin = false
         console.log('response is:', response)
       }
     },
+
+    async logout_init_connexion () {
+      const response = await this.axios.get(this.url + '/api/logout')
+      this.page_accueille = false
+      this.connexion = true
+      this.log = true
+      console.log('response is:', response)
+    },
+
+    async actualiser_score_utilisateur () {
+      const response = await this.axios.get(this.url + '/api/actualiser-score', {
+        meilleur_score: this.nombreDeFaute
+      })
+      this.nombreDeFaute = 0
+      console.log('response is:', response)
+    },
+
     validationCard (c) {
       if (typeof c.reponse === 'boolean') {
         if (c.reponse === true) {
@@ -482,11 +503,6 @@ export default {
         return this.nombreDeFaute
       }
     },
-    page_connexion () {
-      this.page_accueille = false
-      this.connexion = true
-      this.log = true
-    },
 
     page_inscription () {
       this.page_accueille = false
@@ -499,11 +515,26 @@ export default {
       this.inscription = false
       this.connexion = false
       this.log = false
+      this.identifiant = ''
+      this.mdp = ''
+    },
+
+    retour_page_profile () {
+      this.fin = false
+      this.profil = true
     },
 
     Jouer () {
       this.profil = false
       this.jouer = true
+    },
+
+    score_profile () {
+      if (this.meilleur_score === null) {
+        this.message_score_profile = false
+      } else {
+        this.message_score_profile = true
+      }
     }
   }
 }
