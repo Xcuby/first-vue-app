@@ -35,9 +35,9 @@ const users = [{
   meilleur_score: 0
 }]
 
+const questions = [3, 'drapeau', '1998', 1, 2, 0, 2]
+
 app.post('/api/login', (req, res) => {
-  console.log('req.body', req.body)
-  console.log('req.query', req.query)
   if (!req.session.userId) {
     const user = users.find(u => u.username === req.body.login && u.password === req.body.password)
     if (!user) {
@@ -67,6 +67,18 @@ app.post('/api/score', (req, res) => {
   res.json({
     message: users
   })
+})
+
+app.post('/api/reponse', (req, res) => {
+  if (questions[req.body.type] === req.body.reponse) {
+    res.json({
+      message: 'true'
+    })
+  } else {
+    res.json({
+      message: 'false'
+    })
+  }
 })
 
 app.post('/api/addLog', (req, res) => {

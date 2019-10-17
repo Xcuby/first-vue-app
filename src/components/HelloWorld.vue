@@ -61,7 +61,7 @@
               v-show="jouer"
               class="pa-2"
               :color="image[n-1+m].color"
-              v-on:click="image[n-1+m].color = validationCard(image[n-1+m]), changementQuestion (image, image[n-1+m].color)"
+              v-on:click="validationCard(n-1)"
               outlined
               tile
               :elevation="hover ? 0 : 19"
@@ -83,17 +83,17 @@
     <v-row justify:space arround>
       <v-col md="10">
         <v-text-field
-          v-show="montrerChampDeTexte(image[0 + m].reponse) && jouer"
+          v-show="montrerChampDeTexte(image[m].typeResp) && jouer"
           :background-color="couleurText"
           v-model="reponse"
           @click="resetCouleur()"
-          @keyup.enter="validation(), validationText(image[0 + m].reponse), changementQuestion(image, couleurText)"
+          @keyup.enter="validation(), validationText()"
           label="Entrez votre réponse"
           filled
         ></v-text-field>
       </v-col>
       <div class="my-3">
-        <v-btn v-show="montrerChampDeTexte(image[0 + m].reponse) && jouer" x-large color="primary" @click="validation(), validationText(image[0 + m].reponse), changementQuestion(image, couleurText)">Valider</v-btn>
+        <v-btn v-show="montrerChampDeTexte(image[m].typeResp) && jouer" x-large color="primary" @click="validation(), validationText()">Valider</v-btn>
       </div>
     </v-row>
   </v-container>
@@ -148,99 +148,115 @@ export default {
         titre: 'Bugatti chiron',
         color: '',
         type: 0,
-        reponse: false
+        reponse: false,
+        typeResp: 'click'
       },
       {
         src: require('@/assets/Ferrari.jpg'),
         titre: 'Ferrari F8 tributo',
         color: '',
+        type: 0,
         reponse: false
       },
       {
         src: require('@/assets/lamborghini.jpg'),
         titre: 'Lamborghini aventador S',
         color: '',
+        type: 0,
         reponse: false
       },
       {
         src: require('@/assets/2Cheveaux.jpg'),
         titre: 'Citroën 2 Chevaux',
         color: '',
-        reponse: true
+        type: 0,
+        reponse: false
       },
       {
         src: require('@/assets/drapeauBlanc.jpg'),
         titre: 'Blanc',
         color: '',
         type: 1,
-        reponse: 'drapeau'
+        reponse: '',
+        typeResp: 'text'
       },
       {
         src: require('@/assets/drapeauFr.jpg'),
         titre: 'France',
         color: '',
-        reponse: 'drapeau'
+        type: 1,
+        reponse: ''
       },
       {
         src: require('@/assets/drapeauNoir.jpg'),
         titre: 'Noir',
         color: '',
-        reponse: 'drapeau'
+        type: 1,
+        reponse: ''
       },
       {
         src: require('@/assets/drapeauPirate.jpg'),
         titre: 'Pirate',
         color: '',
-        reponse: 'drapeau'
+        type: 1,
+        reponse: ''
       },
       {
         src: require('@/assets/DiCaprio1998.jpg'),
         titre: 'Léonardo DiCaprio dans le film Titanic',
         color: '',
         type: 2,
-        reponse: '1998'
+        reponse: '',
+        typeResp: 'text'
       },
       {
         src: require('@/assets/CDM1998.jpg'),
         titre: 'La France championne du monde de Foot',
         color: '',
-        reponse: '1998'
+        type: 2,
+        reponse: ''
       },
       {
         src: require('@/assets/Chirac1998.jpg'),
         titre: 'Jacques Chirac, président de la France à cette époque',
         color: '',
-        reponse: '1998'
+        type: 2,
+        reponse: ''
       },
       {
         src: require('@/assets/BillClinton1998.jpg'),
         titre: 'Bill Clinton, président des Etats-Unis à cette époque',
         color: '',
-        reponse: '1998'
+        type: 2,
+        reponse: ''
       },
       {
         src: require('@/assets/TractionAvant.jpg'),
         titre: 'Première citroëne Traction-avant',
         color: '',
         type: 3,
-        reponse: false
+        reponse: false,
+        typeResp: 'click'
       },
       {
         src: require('@/assets/ValeryGiscardDEstaing.jpeg'),
         titre: "Valery Giscard d'Estaing, ancien président de la France",
         color: '',
-        reponse: true
+        type: 3,
+        reponse: false
       },
       {
         src: require('@/assets/BrigitteMacron.jpg'),
         titre: 'Brigitte Macron, première dame de France actuelle',
         color: '',
+        type: 3,
         reponse: false
       },
       {
         src: require('@/assets/MachineDeTuring.jpg'),
         titre: 'Première machine de Turing (créé par Alain Turing)',
         color: '',
+        type: 3,
         reponse: false
       },
       {
@@ -248,24 +264,28 @@ export default {
         titre: 'Abraham Lincoln',
         color: '',
         type: 4,
-        reponse: false
+        reponse: false,
+        typeResp: 'click'
       },
       {
         src: require('@/assets/Roosevelt.jpg'),
         titre: 'Theodore Roosevelt',
         color: '',
+        type: 4,
         reponse: false
       },
       {
         src: require('@/assets/Washinghton.jpg'),
         titre: 'George Washinghton',
         color: '',
-        reponse: true
+        type: 4,
+        reponse: false
       },
       {
         src: require('@/assets/Kennedy.jpg'),
         titre: 'John Fitzgerald Kennedy',
         color: '',
+        type: 4,
         reponse: false
       },
       {
@@ -273,24 +293,28 @@ export default {
         titre: 'Dans un théatre',
         color: '',
         type: 5,
-        reponse: true
+        reponse: false,
+        typeResp: 'click'
       },
       {
         src: require('@/assets/Bureau_oval.jpg'),
         titre: 'Dans le bureau ovale',
         color: '',
+        type: 5,
         reponse: false
       },
       {
         src: require('@/assets/baignoire.jpg'),
         titre: 'Dans sa baignoire',
         color: '',
+        type: 5,
         reponse: false
       },
       {
         src: require('@/assets/parade.jpg'),
         titre: "Lors d'un défilé public",
         color: '',
+        type: 5,
         reponse: false
       },
       {
@@ -298,24 +322,28 @@ export default {
         titre: "Guerre d'Algérie",
         color: '',
         type: 6,
-        reponse: false
+        reponse: false,
+        typeResp: 'click'
       },
       {
         src: require('@/assets/guerreDeSécession.jpg'),
         titre: 'Guerre de Sécession',
         color: '',
+        type: 6,
         reponse: false
       },
       {
         src: require('@/assets/1ereGuerreMondiale.jpg'),
         titre: 'Première guerre mondiale',
         color: '',
-        reponse: true
+        type: 6,
+        reponse: false
       },
       {
         src: require('@/assets/2ndGuerreMondiale.jpg'),
         titre: 'Second guerre mondiale',
         color: '',
+        type: 6,
         reponse: false
       }
     ],
@@ -436,8 +464,8 @@ export default {
       this.fin = false
       this.profil = true
       this.m = 0
+      this.message_score_profile = true
       if ((this.meilleur_score != null && this.meilleur_score > this.nombreDeFaute)) {
-        this.message_score_profile = false
         this.meilleur_score = this.nombreDeFaute
         const response = await this.axios.post(this.url + '/api/score', {
           login: this.identifiant,
@@ -446,7 +474,6 @@ export default {
         })
         console.log('response is:', response)
       } else if (this.meilleur_score === null) {
-        this.message_score_profile = true
         this.meilleur_score = this.nombreDeFaute
         const response = await this.axios.post(this.url + '/api/score', {
           login: this.identifiant,
@@ -458,50 +485,67 @@ export default {
       this.nombreDeFaute = 0
     },
 
-    validationCard (c) {
-      if (typeof c.reponse === 'boolean') {
-        if (c.reponse === true) {
-          return 'green'
+    async validationCard (indice) {
+      if (this.image[this.m].typeResp === 'click') {
+        const response = await this.axios.post(this.url + '/api/reponse', {
+          type: this.image[indice + this.m].type,
+          reponse: indice
+        })
+        console.log(response.data.message)
+        if (response.data.message === 'true') {
+          this.image[indice + this.m].color = 'green'
         } else {
-          if (c.color === '') {
+          if (this.image[indice + this.m].color === '') {
             this.nombreDeFaute++
-            return 'red'
-          } else {
-            return ''
+            this.image[indice + this.m].color = 'red'
           }
         }
+        console.log(this.image[indice + this.m].color)
+      }
+      console.log(this.image[indice + this.m].color)
+      if (this.image[indice + this.m].color === 'green' && this.image.length - this.m > 4) {
+        console.log('test1')
+        for (var i = 0; i < 4; i++) {
+          this.image[i + this.m].color = ''
+        }
+        this.m = this.m + 4
+        return ''
+      } else if (this.image.length - this.m === 4 && this.image[indice + this.m].color === 'green') {
+        this.fin = true
+        this.jouer = false
+        for (var j = 0; j < 4; j++) {
+          this.image[j + this.m].color = ''
+        }
+        return ''
       }
     },
-    validationText (c) {
-      if (typeof c === 'string' && this.valider === true) {
-        if (c === this.reponse.toLowerCase()) {
+    async validationText () {
+      if (this.image[this.m].typeResp === 'text' && this.valider === true) {
+        const response = await this.axios.post(this.url + '/api/reponse', {
+          type: this.image[this.m].type,
+          reponse: this.reponse.toLowerCase()
+        })
+        if (response.data.message === 'true') {
           this.couleurText = 'green'
-          return ''
         } else {
           this.nombreDeFaute++
           this.couleurText = 'red'
-          return ''
         }
       }
-    },
-    changementQuestion (liste, couleur) {
-      if (couleur === 'green' && liste.length - this.m > 4) {
-        for (var i = 0; i < 4; i++) {
-          liste[i + this.m].color = ''
-        }
+      if (this.couleurText === 'green' && this.image.length - this.m > 4) {
         this.m = this.m + 4
         this.couleurText = ''
         this.reponse = ''
         return ''
-      } else if (liste.length - this.m === 4 && couleur === 'green') {
+      } else if (this.couleurText === 'green' && this.image.length - this.m > 4) {
         this.fin = true
         this.jouer = false
-        for (var j = 0; j < 4; j++) {
-          liste[j + this.m].color = ''
-        }
+        this.couleurText = ''
+        this.reponse = ''
         return ''
       }
     },
+
     validation () {
       this.valider = true
     },
@@ -510,8 +554,8 @@ export default {
       this.reponse = ''
       return ''
     },
-    montrerChampDeTexte (resp) {
-      if (this.fin || typeof resp === 'boolean') {
+    montrerChampDeTexte (typeResp) {
+      if (this.fin || typeResp === 'click') {
         return false
       } else {
         return true
@@ -528,13 +572,11 @@ export default {
         return this.nombreDeFaute
       }
     },
-
     page_inscription () {
       this.page_accueille = false
       this.inscription = true
       this.log = true
     },
-
     retour_page_accueille () {
       this.page_accueille = true
       this.inscription = false
@@ -543,7 +585,6 @@ export default {
       this.identifiant = ''
       this.mdp = ''
     },
-
     Jouer () {
       this.profil = false
       this.jouer = true
