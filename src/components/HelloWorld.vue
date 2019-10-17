@@ -491,7 +491,7 @@ export default {
           type: this.image[indice + this.m].type,
           reponse: indice
         })
-        console.log(response.data.message)
+        console.log('response is:', response)
         if (response.data.message === 'true') {
           this.image[indice + this.m].color = 'green'
         } else {
@@ -500,11 +500,8 @@ export default {
             this.image[indice + this.m].color = 'red'
           }
         }
-        console.log(this.image[indice + this.m].color)
       }
-      console.log(this.image[indice + this.m].color)
       if (this.image[indice + this.m].color === 'green' && this.image.length - this.m > 4) {
-        console.log('test1')
         for (var i = 0; i < 4; i++) {
           this.image[i + this.m].color = ''
         }
@@ -525,6 +522,7 @@ export default {
           type: this.image[this.m].type,
           reponse: this.reponse.toLowerCase()
         })
+        console.log('response is:', response)
         if (response.data.message === 'true') {
           this.couleurText = 'green'
         } else {
