@@ -33,7 +33,12 @@ const users = [{
   username: 'admin',
   password: 'Xav',
   meilleur_score: 0,
-  historique: [0]
+  historique: [
+    {
+      numeroPartie: 1,
+      score: 0
+    }
+  ]
 }]
 
 const questions = [3, 'drapeau', '1998', 1, 2, 0, 2]
@@ -51,8 +56,8 @@ app.post('/api/login', (req, res) => {
       req.session.userId = 1000 // connect the user, and change the id
       res.json({
         message: 'connected',
-        meilleur_score_utilisateur: user.meilleur_score,
-        historique: user.score
+        meilleur_score: user.meilleur_score,
+        historique: user.historique
       })
     }
   } else {
@@ -66,9 +71,13 @@ app.post('/api/login', (req, res) => {
 app.post('/api/score', (req, res) => {
   const user = users.find(u => u.username === req.body.login && u.password === req.body.password)
   user.meilleur_score = req.body.meilleur_score
-  user.historique.push(req.body.score)
+  user.historique.unshift({
+    numeroPartie: user.historique.length + 1,
+    score: req.body.score
+  })
   res.json({
-    message: users
+    message: 'score actualiser',
+    historique: user.historique
   })
 })
 
