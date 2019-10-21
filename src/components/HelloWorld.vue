@@ -407,6 +407,7 @@ export default {
         this.profil = true
         this.alerte_connexion = false
         this.meilleur_score = response.data.meilleur_score_utilisateur
+        this.score
         if (this.meilleur_score === null) {
           this.message_score_profile = false
         } else {

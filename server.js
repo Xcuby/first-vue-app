@@ -33,7 +33,7 @@ const users = [{
   username: 'admin',
   password: 'Xav',
   meilleur_score: 0,
-  historique : [0]
+  historique: [0]
 }]
 
 const questions = [3, 'drapeau', '1998', 1, 2, 0, 2]
@@ -51,7 +51,8 @@ app.post('/api/login', (req, res) => {
       req.session.userId = 1000 // connect the user, and change the id
       res.json({
         message: 'connected',
-        meilleur_score_utilisateur: user.meilleur_score
+        meilleur_score_utilisateur: user.meilleur_score,
+        historique: user.score
       })
     }
   } else {
@@ -67,7 +68,7 @@ app.post('/api/score', (req, res) => {
   user.meilleur_score = req.body.meilleur_score
   user.historique.push(req.body.score)
   res.json({
-    message: users,
+    message: users
   })
 })
 
