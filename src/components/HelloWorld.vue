@@ -41,10 +41,22 @@
       <v-alert v-show="alerte_connexion" outlined class="text-center font-weight-medium" v-text="message_connexion"></v-alert>
     </div>
     <div v-show="profil">
-      <h1>Bienvenue, {{identifiant}}</h1>
-      <p v-show="message_score_profile">Votre meilleur score est de {{meilleur_score}} faute(s)</p>
-      <p v-show="!message_score_profile">Vous n'avez pas encore de meilleur score, jouer au moins une fois pour en avoir un!</p>
-      <v-btn @click="Jouer">Jouer !</v-btn>
+      <h1>Bienvenue {{identifiant}},</h1>
+      <div v-show ="message_score_profile">
+      <p class="text-center font-weight-medium" >Votre meilleur score est de {{meilleur_score}} faute(s)</p>
+      <p class="text-center font-weight-medium">historique de partie</p>
+      <v-data-table
+      :headers="[{ text: 'Partie n°', align: 'left', value: 'numeroPartie'}, { text: 'Score', value: 'score'}]"
+      :items="score"
+      :items-per-page="5"
+    class="elevation-1"
+  ></v-data-table>
+      </div>
+      <div v-show="!message_score_profile">
+      <p>Vous n'avez pas encore de meilleur score, jouer au moins une fois pour en avoir un!</p>
+      <p>Votre historique est vide pour l'instant !</p>
+      </div>
+      <v-btn block rounded color='primary' @click="Jouer">Jouer !</v-btn>
     </div>
     <div v-show="jouer" class="text-center display-1" v-text="enonce[image[0+m].type].consigne"></div>
     <div v-show="fin" class="text-center display-4" v-text="Score()"></div>
@@ -134,6 +146,7 @@ export default {
     profil: false,
     jouer: false,
     message_score_profile: false,
+    score: [],
     type_alerte_connexion: '',
     url: 'http://localhost:4000',
     rules_mdp_id: {
@@ -406,7 +419,8 @@ export default {
         this.log = false
         this.profil = true
         this.alerte_connexion = false
-        this.meilleur_score = response.data.meilleur_score_utilisateur
+        this.meilleur_score = response.data.meilleur_score
+        this.score = response.data.historique
         if (this.meilleur_score === null) {
           this.message_score_profile = false
         } else {
@@ -470,16 +484,28 @@ export default {
         const response = await this.axios.post(this.url + '/api/score', {
           login: this.identifiant,
           password: this.mdp,
-          meilleur_score: this.meilleur_score
+          meilleur_score: this.meilleur_score,
+          score: this.nombreDeFaute
         })
+        this.score = response.data.historique
         console.log('response is:', response)
       } else if (this.meilleur_score === null) {
         this.meilleur_score = this.nombreDeFaute
         const response = await this.axios.post(this.url + '/api/score', {
           login: this.identifiant,
           password: this.mdp,
-          meilleur_score: this.meilleur_score
+          meilleur_score: this.meilleur_score,
+          score: this.nombreDeFaute
         })
+        this.score = response.data.historique
+        console.log('response is:', response)
+      } else {
+        const response = await this.axios.post(this.url + '/api/score', {
+          login: this.identifiant,
+          password: this.mdp,
+          score: this.nombreDeFaute
+        })
+        this.score = response.data.historique
         console.log('response is:', response)
       }
       this.nombreDeFaute = 0

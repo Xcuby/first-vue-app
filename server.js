@@ -32,7 +32,13 @@ app.use(express.static(path.join(__dirname, 'dist/')))
 const users = [{
   username: 'admin',
   password: 'Xav',
-  meilleur_score: 0
+  meilleur_score: 0,
+  historique: [
+    {
+      numeroPartie: 1,
+      score: 0
+    }
+  ]
 }]
 
 const questions = [3, 'drapeau', '1998', 1, 2, 0, 2]
@@ -50,7 +56,8 @@ app.post('/api/login', (req, res) => {
       req.session.userId = 1000 // connect the user, and change the id
       res.json({
         message: 'connected',
-        meilleur_score_utilisateur: user.meilleur_score
+        meilleur_score: user.meilleur_score,
+        historique: user.historique
       })
     }
   } else {
@@ -64,8 +71,13 @@ app.post('/api/login', (req, res) => {
 app.post('/api/score', (req, res) => {
   const user = users.find(u => u.username === req.body.login && u.password === req.body.password)
   user.meilleur_score = req.body.meilleur_score
+  user.historique.unshift({
+    numeroPartie: user.historique.length + 1,
+    score: req.body.score
+  })
   res.json({
-    message: users
+    message: 'score actualiser',
+    historique: user.historique
   })
 })
 
@@ -87,7 +99,8 @@ app.post('/api/addLog', (req, res) => {
     users.push({
       username: req.body.login,
       password: req.body.password,
-      meilleur_score: null
+      meilleur_score: null,
+      historique: []
     })
     res.json({
       message: 'user created succesfull'
