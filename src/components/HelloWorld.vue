@@ -470,7 +470,8 @@ export default {
         const response = await this.axios.post(this.url + '/api/score', {
           login: this.identifiant,
           password: this.mdp,
-          meilleur_score: this.meilleur_score
+          meilleur_score: this.meilleur_score,
+          score: this.nombreDeFaute
         })
         console.log('response is:', response)
       } else if (this.meilleur_score === null) {
@@ -478,7 +479,16 @@ export default {
         const response = await this.axios.post(this.url + '/api/score', {
           login: this.identifiant,
           password: this.mdp,
-          meilleur_score: this.meilleur_score
+          meilleur_score: this.meilleur_score,
+          score: this.nombreDeFaute
+        })
+        console.log('response is:', response)
+      }
+      else {
+        const response = await this.axios.post(this.url + '/api/score', {
+          login: this.identifiant,
+          password: this.mdp,
+          score: this.nombreDeFaute
         })
         console.log('response is:', response)
       }
