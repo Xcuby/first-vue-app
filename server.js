@@ -65,8 +65,9 @@ app.post('/api/login', (req, res) => {
 app.post('/api/score', (req, res) => {
   const user = users.find(u => u.username === req.body.login && u.password === req.body.password)
   user.meilleur_score = req.body.meilleur_score
+  user.historique.push(req.body.score)
   res.json({
-    message: users
+    message: users,
   })
 })
 
