@@ -39,7 +39,7 @@ const users = [{
       score: 0
     }
   ],
-  classement_global: [
+const classement_global = [
     {
       username: 'admin',
       score: 0
@@ -63,7 +63,8 @@ app.post('/api/login', (req, res) => {
       res.json({
         message: 'connected',
         meilleur_score: user.meilleur_score,
-        historique: user.historique
+        historique: user.historique,
+        classement_global: this.classement_global
       })
     }
   } else {
@@ -81,9 +82,16 @@ app.post('/api/score', (req, res) => {
     numeroPartie: user.historique.length + 1,
     score: req.body.score
   })
+  const classement = classement_global.find(v => v.username === user.username)
+  if (classement) {
+    this.classement_global.unshift({
+
+    })
+  }
   res.json({
     message: 'score actualiser',
-    historique: user.historique
+    historique: user.historique,
+    classement_global: this.classement_global
   })
 })
 
