@@ -38,6 +38,12 @@ const users = [{
       numeroPartie: 1,
       score: 0
     }
+  ],
+  classement_global: [
+    {
+      username: 'admin',
+      score: 0
+    }
   ]
 }]
 
