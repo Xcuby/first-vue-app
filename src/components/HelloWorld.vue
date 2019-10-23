@@ -147,6 +147,7 @@ export default {
     jouer: false,
     message_score_profile: false,
     score: [],
+    classement_global: [],
     type_alerte_connexion: '',
     url: 'http://localhost:4000',
     rules_mdp_id: {
@@ -488,6 +489,7 @@ export default {
           score: this.nombreDeFaute
         })
         this.score = response.data.historique
+        this.classement_global = response.data.classement_global
         console.log('response is:', response)
       } else if (this.meilleur_score === null) {
         this.meilleur_score = this.nombreDeFaute
@@ -498,6 +500,7 @@ export default {
           score: this.nombreDeFaute
         })
         this.score = response.data.historique
+        this.classement_global = response.data.classement_global
         console.log('response is:', response)
       } else {
         const response = await this.axios.post(this.url + '/api/score', {
@@ -506,6 +509,7 @@ export default {
           score: this.nombreDeFaute
         })
         this.score = response.data.historique
+        this.classement_global = response.data.classement_global
         console.log('response is:', response)
       }
       this.nombreDeFaute = 0
