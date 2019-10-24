@@ -6,7 +6,6 @@
         <span class="font-weight-light">test de culture générale/QI</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn @click="logout">Déconnexion</v-btn>
     </v-app-bar>
     <v-container class="grey lighten-5">
         <v-btn block rounded color="primary" @click="Connexion" x-large>Connectez-vous</v-btn>
@@ -23,7 +22,7 @@ export default {
   methods: {
     async Connexion () {
       this.$router.push('/PageConnexion')
-      this.$router.go(1)
+      this.$router.go(2)
     },
     async Inscription () {
       this.$router.push('/PageInscription')
@@ -31,3 +30,4 @@ export default {
     }
   }
 }
+</script>
