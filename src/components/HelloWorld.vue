@@ -3,134 +3,164 @@
     <v-app-bar app>
       <v-toolbar-title class="headline text-uppercase">
         <span>4 images :</span>
-        <span class="font-weight-light">  test de culture générale/QI</span>
+        <span class="font-weight-light">test de culture générale/QI</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-        <v-btn v-show="!page_accueille && !log" @click="logout">Déconnexion</v-btn>
+      <v-btn v-show="!page_accueille && !log" @click="logout">Déconnexion</v-btn>
     </v-app-bar>
-  <v-container class="grey lighten-5">
-    <div v-show="page_accueille">
-      <v-btn block rounded color='primary' @click="logout_init_connexion" x-large>Connectez-vous</v-btn>
-      <p></p>
-      <v-btn block rounded color= 'secondary' @click="page_inscription" x-large>Inscrivez-vous</v-btn>
-    </div>
-    <div v-show="log">
-      <v-btn @click="retour_page_accueille" rounded>Retour</v-btn>
-      <v-text-field
+    <v-container class="grey lighten-5">
+      <div v-show="page_accueille">
+        <v-btn block rounded color="primary" @click="logout_init_connexion" x-large>Connectez-vous</v-btn>
+        <p></p>
+        <v-btn block rounded color="secondary" @click="page_inscription" x-large>Inscrivez-vous</v-btn>
+      </div>
+      <div v-show="log">
+        <v-btn @click="retour_page_accueille" rounded>Retour</v-btn>
+        <v-text-field
           label="Identifiant"
           filled
           v-model="identifiant"
           :rules="[rules_mdp_id.required, rules_mdp_id.min]"
           hint="Au moins 4 caracteres"
           counter
-          ></v-text-field>
-      <v-text-field
-            v-model="mdp"
-            :append-icon="show_mdp ? 'Cacher' : 'Afficher'"
-            :rules="[rules_mdp_id.required, rules_mdp_id.min]"
-            :type="show_mdp ? 'text' : 'password'"
-            label="Mot de passe"
-            hint="Au moins 4 caracteres"
-            counter
-            @click:append="show_mdp = !show_mdp"
-          ></v-text-field>
-      <v-btn @click="login" v-show="connexion" block rounded color="primary">Connexion</v-btn>
-      <v-btn @click="addLog" v-show="inscription" block rounded color="primary">Inscription</v-btn>
-    </div>
-    <div>
-      <v-alert v-show="alerte_connexion" outlined class="text-center font-weight-medium" v-text="message_connexion"></v-alert>
-    </div>
-    <div v-show="profil">
-      <v-btn v-show="historique || rank" @click="retour_profil" rounded>Retour</v-btn>
-      <div v-show="!historique && !rank">
-        <h1>Bienvenue {{identifiant}},</h1>
-        <div v-show ="message_score_profile">
-          <p class="text-center font-weight-medium" >Votre meilleur score est de {{meilleur_score}} faute(s)</p>
-        </div>
-        <div v-show="!message_score_profile">
-          <p>Vous n'avez pas encore de meilleur score, jouer au moins une fois pour en avoir un!</p>
-        </div>
-            <v-btn block rounded color='primary' @click="Jouer">Jouer !</v-btn>
-            <p></p>
-            <v-btn @click="historic" block rounded color="secondary">Historique personnel</v-btn>
-            <p></p>
-            <v-btn @click="classement_general" block rounded color="secondary">Classement général entre tous les joueurs</v-btn>
+        ></v-text-field>
+        <v-text-field
+          v-model="mdp"
+          :append-icon="show_mdp ? 'Cacher' : 'Afficher'"
+          :rules="[rules_mdp_id.required, rules_mdp_id.min]"
+          :type="show_mdp ? 'text' : 'password'"
+          label="Mot de passe"
+          hint="Au moins 4 caracteres"
+          counter
+          @click:append="show_mdp = !show_mdp"
+        ></v-text-field>
+        <v-btn @click="login" v-show="connexion" block rounded color="primary">Connexion</v-btn>
+        <v-btn @click="addLog" v-show="inscription" block rounded color="primary">Inscription</v-btn>
       </div>
-      <div v-show="historique" rounded color="primary">
-        <div v-show="message_score_profile">
-          <p class="text-center font-weight-medium">HISTORIQUE PERSONNEL</p>
+      <div>
+        <v-alert
+          v-show="alerte_connexion"
+          outlined
+          class="text-center font-weight-medium"
+          v-text="message_connexion"
+        ></v-alert>
+      </div>
+      <div v-show="profil">
+        <v-btn v-show="historique || rank" @click="retour_profil" rounded>Retour</v-btn>
+        <div v-show="!historique && !rank">
+          <h1>Bienvenue {{identifiant}},</h1>
+          <div v-show="message_score_profile">
+            <p
+              class="text-center font-weight-medium"
+            >Votre meilleur score est de {{meilleur_score}} faute(s)</p>
+          </div>
+          <div v-show="!message_score_profile">
+            <p>Vous n'avez pas encore de meilleur score, jouer au moins une fois pour en avoir un!</p>
+          </div>
+          <v-btn block rounded color="primary" @click="Jouer">Jouer !</v-btn>
+          <p></p>
+          <v-btn @click="historic" block rounded color="secondary">Historique personnel</v-btn>
+          <p></p>
+          <v-btn
+            @click="classement_general"
+            block
+            rounded
+            color="secondary"
+          >Classement général entre tous les joueurs</v-btn>
+        </div>
+        <div v-show="historique" rounded color="primary">
+          <div v-show="message_score_profile">
+            <p class="text-center font-weight-medium">HISTORIQUE PERSONNEL</p>
+            <v-data-table
+              :headers="[{ text: 'Partie n°', align: 'left', value: 'numeroPartie'}, { text: 'Nombre de fautes', value: 'score'}]"
+              :items="score"
+              :items-per-page="5"
+              class="elevation-1"
+            ></v-data-table>
+          </div>
+          <div v-show="!message_score_profile">
+            <p>Votre historique est vide pour l'instant !</p>
+          </div>
+        </div>
+        <div v-show="rank" rounded color="primary">
+          <p class="text-center font-weight-medium">CLASSEMENT GLOBAL</p>
           <v-data-table
-          :headers="[{ text: 'Partie n°', align: 'left', value: 'numeroPartie'}, { text: 'Nombre de fautes', value: 'score'}]"
-          :items="score"
-          :items-per-page="5"
-          class="elevation-1"
+            :headers="[{ text: 'Rang', align: 'left', value: 'rang'}, { text: 'Pseudo du joueur', value: 'username'}, { text: 'Nombre de fautes', value: 'score'}]"
+            :items="classement_global"
+            :items-per-page="5"
+            class="elevation-1"
           ></v-data-table>
         </div>
-        <div v-show="!message_score_profile">
-          <p>Votre historique est vide pour l'instant !</p>
-        </div>
       </div>
-      <div v-show="rank" rounded color="primary">
-        <p class="text-center font-weight-medium">CLASSEMENT GLOBAL</p>
-        <v-data-table
-        :headers="[{ text: 'Rang', align: 'left', value: 'rang'}, { text: 'Pseudo du joueur', value: 'username'}, { text: 'Nombre de fautes', value: 'score'}]"
-        :items="classement_global"
-        :items-per-page="5"
-        class="elevation-1"
-        ></v-data-table>
-      </div>
-    </div>
-    <div v-show="jouer" class="text-center display-1" v-text="enonce[image[0+m].type].consigne"></div>
-    <div v-show="fin" class="text-center display-4" v-text="Score()"></div>
-    <v-row align="center" justify="center">
-      <v-img v-show="fin" :src="intelligence[fauteFinal()].src" aspect-ratio="1" class="grey darken-4 " max-width="1000" max-height="500"></v-img>
-    </v-row>
-    <div v-show="fin" class="text-center display-1" v-text="intelligence[fauteFinal()].titre"></div>
-    <v-btn v-show="fin" @click="actualiser_score_utilisateur" block rounded color="primary">Terminer</v-btn>
-    <v-row justify:space arround>
-      <template v-for="n in 4">
-        <v-col :key="n">
-          <v-hover v-slot:default="{ hover }">
-            <v-card
-              v-show="jouer"
-              class="pa-2"
-              :color="image[n-1+m].color"
-              v-on:click="validationCard(n-1)"
-              outlined
-              tile
-              :elevation="hover ? 0 : 19"
-            >
-              <v-img
-                :src="image[n-1+m].src"
-                aspect-ratio="1"
-                class="grey lighten-2"
-                max-width="600"
-                max-height="215"
-              ></v-img>
-              <div class="text-center font-weight-medium" v-text="image[n-1+m].titre"></div>
-            </v-card>
-          </v-hover>
+      <div v-show="jouer" class="text-center display-1" v-text="enonce[image[0+m].type].consigne"></div>
+      <div v-show="fin" class="text-center display-4" v-text="Score()"></div>
+      <v-row align="center" justify="center">
+        <v-img
+          v-show="fin"
+          :src="intelligence[fauteFinal()].src"
+          aspect-ratio="1"
+          class="grey darken-4"
+          max-width="1000"
+          max-height="500"
+        ></v-img>
+      </v-row>
+      <div v-show="fin" class="text-center display-1" v-text="intelligence[fauteFinal()].titre"></div>
+      <v-btn
+        v-show="fin"
+        @click="actualiser_score_utilisateur"
+        block
+        rounded
+        color="primary"
+      >Terminer</v-btn>
+      <v-row justify:space arround>
+        <template v-for="n in 4">
+          <v-col :key="n">
+            <v-hover v-slot:default="{ hover }">
+              <v-card
+                v-show="jouer"
+                class="pa-2"
+                :color="image[n-1+m].color"
+                v-on:click="validationCard(n-1)"
+                outlined
+                tile
+                :elevation="hover ? 0 : 19"
+              >
+                <v-img
+                  :src="image[n-1+m].src"
+                  aspect-ratio="1"
+                  class="grey lighten-2"
+                  max-width="600"
+                  max-height="215"
+                ></v-img>
+                <div class="text-center font-weight-medium" v-text="image[n-1+m].titre"></div>
+              </v-card>
+            </v-hover>
+          </v-col>
+          <v-responsive v-if="n-1 === 1" :key="`width-${n-1}`" width="100%"></v-responsive>
+        </template>
+      </v-row>
+      <v-row justify:space arround>
+        <v-col md="10">
+          <v-text-field
+            v-show="montrerChampDeTexte(image[m].typeResp) && jouer"
+            :background-color="couleurText"
+            v-model="reponse"
+            @click="resetCouleur()"
+            @keyup.enter="validation(), validationText()"
+            label="Entrez votre réponse"
+            filled
+          ></v-text-field>
         </v-col>
-        <v-responsive v-if="n-1 === 1" :key="`width-${n-1}`" width="100%"></v-responsive>
-      </template>
-    </v-row>
-    <v-row justify:space arround>
-      <v-col md="10">
-        <v-text-field
-          v-show="montrerChampDeTexte(image[m].typeResp) && jouer"
-          :background-color="couleurText"
-          v-model="reponse"
-          @click="resetCouleur()"
-          @keyup.enter="validation(), validationText()"
-          label="Entrez votre réponse"
-          filled
-        ></v-text-field>
-      </v-col>
-      <div class="my-3">
-        <v-btn v-show="montrerChampDeTexte(image[m].typeResp) && jouer" x-large color="primary" @click="validation(), validationText()">Valider</v-btn>
-      </div>
-    </v-row>
-  </v-container>
+        <div class="my-3">
+          <v-btn
+            v-show="montrerChampDeTexte(image[m].typeResp) && jouer"
+            x-large
+            color="primary"
+            @click="validation(), validationText()"
+          >Valider</v-btn>
+        </div>
+      </v-row>
+    </v-container>
   </v-app>
 </template>
 
@@ -140,13 +170,22 @@ import { METHODS } from 'http'
 export default {
   data: () => ({
     enonce: [
-      { consigne: "Trouvez l'intrus parmis les images suivantes, cliquez directement sur l'image!" },
-      { consigne: 'Entrez le points communs entre ces différentes images, entrez votre réponse dans le champ de texte!' },
+      {
+        consigne:
+          "Trouvez l'intrus parmis les images suivantes, cliquez directement sur l'image!"
+      },
+      {
+        consigne:
+          'Entrez le points communs entre ces différentes images, entrez votre réponse dans le champ de texte!'
+      },
       {
         consigne:
           'A votre avis de quelle année datent ces photos (elles ont toutes été prises à la même date), entrez votre réponse dans le champ de texte!'
       },
-      { consigne: "Quel est la personne (ou objet) la plus âgée (ou le plus ancien), cliquez directement sur l'image!" },
+      {
+        consigne:
+          "Quel est la personne (ou objet) la plus âgée (ou le plus ancien), cliquez directement sur l'image!"
+      },
       { consigne: 'Qui est le premier président des Etats-Unis?' },
       { consigne: 'Où Abraham Lincoln a t-il été assassiné?' },
       { consigne: 'Quand a eu lieu la bataille du Chemin des Dames?' }
@@ -388,7 +427,8 @@ export default {
     intelligence: [
       {
         src: require('@/assets/YagamiLight.jpeg'),
-        titre: "Tu as l'intelligence de Yagami Light de Death Note.\nTu as un QI de 300!!!!"
+        titre:
+          "Tu as l'intelligence de Yagami Light de Death Note.\nTu as un QI de 300!!!!"
       },
       {
         src: require('@/assets/SherlockHolmes.jpg'),
@@ -396,11 +436,13 @@ export default {
       },
       {
         src: require('@/assets/Rick.jpg'),
-        titre: "Tu as l'intelligence de Rick de Rick & Morty.\nTu as un QI 220!!!"
+        titre:
+          "Tu as l'intelligence de Rick de Rick & Morty.\nTu as un QI 220!!!"
       },
       {
         src: require('@/assets/Yoda.jpg'),
-        titre: "Tu as l'intelligence de Yoda de Star Wars. \n Tu as un QI de 180!!!"
+        titre:
+          "Tu as l'intelligence de Yoda de Star Wars. \n Tu as un QI de 180!!!"
       },
       {
         src: require('@/assets/Einstein.jpg'),
@@ -408,7 +450,8 @@ export default {
       },
       {
         src: require('@/assets/Leonard.jpeg'),
-        titre: "Tu as l'intelligence de Leonard de The Big Bang theory. \n Tu as un QI de 140!!"
+        titre:
+          "Tu as l'intelligence de Leonard de The Big Bang theory. \n Tu as un QI de 140!!"
       },
       {
         src: require('@/assets/MorganFreeman.jpg'),
@@ -416,19 +459,23 @@ export default {
       },
       {
         src: require('@/assets/Saitama.png'),
-        titre: "Tu as l'intelligence de Saitama de One punch man. \n Tu as un QI de 90..."
+        titre:
+          "Tu as l'intelligence de Saitama de One punch man. \n Tu as un QI de 90..."
       },
       {
         src: require('@/assets/Reese.jpg'),
-        titre: "Tu as l'intelligence de Reese de Malcom. \n Tu as un QI de 70..."
+        titre:
+          "Tu as l'intelligence de Reese de Malcom. \n Tu as un QI de 70..."
       },
       {
         src: require('@/assets/Junior.png'),
-        titre: "Tu as l'intelligence de Junior dans Ma famille d'abord. \n Tu as un QI de 50...."
+        titre:
+          "Tu as l'intelligence de Junior dans Ma famille d'abord. \n Tu as un QI de 50...."
       },
       {
         src: require('@/assets/Homer.jpg'),
-        titre: "Tu as l'intelligence d'Homer dans les Simpson. \n Tu as un QI de 30......."
+        titre:
+          "Tu as l'intelligence d'Homer dans les Simpson. \n Tu as un QI de 30......."
       }
     ]
   }),
@@ -469,12 +516,16 @@ export default {
         this.log = false
         this.inscription = false
         this.type_alerte_connexion = 'success'
-        this.message_connexion = 'Votre profil a été créé avec succès, vous pouvez maintenant vous connecter!'
+        this.message_connexion =
+          'Votre profil a été créé avec succès, vous pouvez maintenant vous connecter!'
         this.identifiant = ''
         this.mdp = ''
-      } else if (response.data.message === 'user already exist, please enter new id') {
+      } else if (
+        response.data.message === 'user already exist, please enter new id'
+      ) {
         this.type_alerte_connexion = 'error'
-        this.message_connexion = "Ce nom d'utilisateur est déjà utilisé, veuillez en utiliser un nouveau!"
+        this.message_connexion =
+          "Ce nom d'utilisateur est déjà utilisé, veuillez en utiliser un nouveau!"
       }
       console.log('response is:', response)
     },
@@ -505,7 +556,10 @@ export default {
       this.profil = true
       this.m = 0
       this.message_score_profile = true
-      if ((this.meilleur_score != null && this.meilleur_score > this.nombreDeFaute)) {
+      if (
+        this.meilleur_score != null &&
+        this.meilleur_score > this.nombreDeFaute
+      ) {
         this.meilleur_score = this.nombreDeFaute
         const response = await this.axios.post(this.url + '/api/score', {
           login: this.identifiant,
@@ -559,13 +613,19 @@ export default {
           }
         }
       }
-      if (this.image[indice + this.m].color !== '' && this.image.length - this.m > 4) {
+      if (
+        this.image[indice + this.m].color !== '' &&
+        this.image.length - this.m > 4
+      ) {
         for (var i = 0; i < 4; i++) {
           this.image[i + this.m].color = ''
         }
         this.m = this.m + 4
         return ''
-      } else if (this.image.length - this.m === 4 && this.image[indice + this.m].color !== '') {
+      } else if (
+        this.image.length - this.m === 4 &&
+        this.image[indice + this.m].color !== ''
+      ) {
         this.fin = true
         this.jouer = false
         for (var j = 0; j < 4; j++) {
