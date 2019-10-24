@@ -41,22 +41,44 @@
       <v-alert v-show="alerte_connexion" outlined class="text-center font-weight-medium" v-text="message_connexion"></v-alert>
     </div>
     <div v-show="profil">
-      <h1>Bienvenue {{identifiant}},</h1>
-      <div v-show ="message_score_profile">
-      <p class="text-center font-weight-medium" >Votre meilleur score est de {{meilleur_score}} faute(s)</p>
-      <p class="text-center font-weight-medium">historique de partie</p>
-      <v-data-table
-      :headers="[{ text: 'Partie n°', align: 'left', value: 'numeroPartie'}, { text: 'Score', value: 'score'}]"
-      :items="score"
-      :items-per-page="5"
-    class="elevation-1"
-  ></v-data-table>
+      <v-btn v-show="historique || rank" @click="retour_profil" rounded>Retour</v-btn>
+      <div v-show="!historique && !rank">
+        <h1>Bienvenue {{identifiant}},</h1>
+        <div v-show ="message_score_profile">
+          <p class="text-center font-weight-medium" >Votre meilleur score est de {{meilleur_score}} faute(s)</p>
+        </div>
+        <div v-show="!message_score_profile">
+          <p>Vous n'avez pas encore de meilleur score, jouer au moins une fois pour en avoir un!</p>
+        </div>
+            <v-btn block rounded color='primary' @click="Jouer">Jouer !</v-btn>
+            <p></p>
+            <v-btn @click="historic" block rounded color="secondary">Historique personnel</v-btn>
+            <p></p>
+            <v-btn @click="classement_general" block rounded color="secondary">Classement général entre tous les joueurs</v-btn>
       </div>
-      <div v-show="!message_score_profile">
-      <p>Vous n'avez pas encore de meilleur score, jouer au moins une fois pour en avoir un!</p>
-      <p>Votre historique est vide pour l'instant !</p>
+      <div v-show="historique" rounded color="primary">
+        <div v-show="message_score_profile">
+          <p class="text-center font-weight-medium">HISTORIQUE PERSONNEL</p>
+          <v-data-table
+          :headers="[{ text: 'Partie n°', align: 'left', value: 'numeroPartie'}, { text: 'Nombre de fautes', value: 'score'}]"
+          :items="score"
+          :items-per-page="5"
+          class="elevation-1"
+          ></v-data-table>
+        </div>
+        <div v-show="!message_score_profile">
+          <p>Votre historique est vide pour l'instant !</p>
+        </div>
       </div>
-      <v-btn block rounded color='primary' @click="Jouer">Jouer !</v-btn>
+      <div v-show="rank" rounded color="primary">
+        <p class="text-center font-weight-medium">CLASSEMENT GLOBAL</p>
+        <v-data-table
+        :headers="[{ text: 'Rang', align: 'left', value: 'rang'}, { text: 'Pseudo du joueur', value: 'username'}, { text: 'Nombre de fautes', value: 'score'}]"
+        :items="classement_global"
+        :items-per-page="5"
+        class="elevation-1"
+        ></v-data-table>
+      </div>
     </div>
     <div v-show="jouer" class="text-center display-1" v-text="enonce[image[0+m].type].consigne"></div>
     <div v-show="fin" class="text-center display-4" v-text="Score()"></div>
@@ -144,6 +166,8 @@ export default {
     connexion: false,
     inscription: false,
     profil: false,
+    historique: false,
+    rank: false,
     jouer: false,
     message_score_profile: false,
     score: [],
@@ -422,6 +446,7 @@ export default {
         this.alerte_connexion = false
         this.meilleur_score = response.data.meilleur_score
         this.score = response.data.historique
+        this.classement_global = response.data.classement_global
         if (this.meilleur_score === null) {
           this.message_score_profile = false
         } else {
@@ -506,12 +531,15 @@ export default {
         const response = await this.axios.post(this.url + '/api/score', {
           login: this.identifiant,
           password: this.mdp,
+          meilleur_score: this.meilleur_score,
           score: this.nombreDeFaute
         })
         this.score = response.data.historique
         this.classement_global = response.data.classement_global
         console.log('response is:', response)
       }
+      console.log('classement_global: ', this.classement_global)
+      console.log('historique est: ', this.score)
       this.nombreDeFaute = 0
     },
 
@@ -531,13 +559,13 @@ export default {
           }
         }
       }
-      if (this.image[indice + this.m].color === 'green' && this.image.length - this.m > 4) {
+      if (this.image[indice + this.m].color !== '' && this.image.length - this.m > 4) {
         for (var i = 0; i < 4; i++) {
           this.image[i + this.m].color = ''
         }
         this.m = this.m + 4
         return ''
-      } else if (this.image.length - this.m === 4 && this.image[indice + this.m].color === 'green') {
+      } else if (this.image.length - this.m === 4 && this.image[indice + this.m].color !== '') {
         this.fin = true
         this.jouer = false
         for (var j = 0; j < 4; j++) {
@@ -560,12 +588,12 @@ export default {
           this.couleurText = 'red'
         }
       }
-      if (this.couleurText === 'green' && this.image.length - this.m > 4) {
+      if (this.couleurText !== '' && this.image.length - this.m > 4) {
         this.m = this.m + 4
         this.couleurText = ''
         this.reponse = ''
         return ''
-      } else if (this.couleurText === 'green' && this.image.length - this.m > 4) {
+      } else if (this.couleurText !== '' && this.image.length - this.m > 4) {
         this.fin = true
         this.jouer = false
         this.couleurText = ''
@@ -616,6 +644,16 @@ export default {
     Jouer () {
       this.profil = false
       this.jouer = true
+    },
+    retour_profil () {
+      this.historique = false
+      this.rank = false
+    },
+    historic () {
+      this.historique = true
+    },
+    classement_general () {
+      this.rank = true
     }
   }
 }

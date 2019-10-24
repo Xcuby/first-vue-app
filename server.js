@@ -44,7 +44,8 @@ const users = [{
 const classementGlobal = [
   {
     username: 'admin',
-    score: 0
+    score: 0,
+    rang: null
   }
 ]
 
@@ -61,6 +62,12 @@ app.post('/api/login', (req, res) => {
     } else {
       // connect the user
       req.session.userId = 1000 // connect the user, and change the id
+      classementGlobal.sort(function (a, b) {
+        return a.score - b.score
+      })
+      for (var j = 0; j < classementGlobal.length; j++) {
+        classementGlobal[j].rang = j + 1
+      }
       res.json({
         message: 'connected',
         meilleur_score: user.meilleur_score,
@@ -87,10 +94,17 @@ app.post('/api/score', (req, res) => {
   if (!classement) {
     classementGlobal.push({
       username: req.body.login,
-      score: req.body.meilleur_score
+      score: req.body.meilleur_score,
+      rang: null
     })
   } else {
     classement.score = req.body.meilleur_score
+  }
+  classementGlobal.sort(function (a, b) {
+    return a.score - b.score
+  })
+  for (var j = 0; j < classementGlobal.length; j++) {
+    classementGlobal[j].rang = j + 1
   }
   res.json({
     message: 'score actualiser',
