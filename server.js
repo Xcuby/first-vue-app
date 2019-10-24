@@ -41,6 +41,14 @@ const users = [{
   ]
 }]
 
+const classementGlobal = [
+  {
+    username: 'admin',
+    score: 0,
+    rang: null
+  }
+]
+
 const questions = [3, 'drapeau', '1998', 1, 2, 0, 2]
 
 app.post('/api/login', (req, res) => {
@@ -54,10 +62,17 @@ app.post('/api/login', (req, res) => {
     } else {
       // connect the user
       req.session.userId = 1000 // connect the user, and change the id
+      classementGlobal.sort(function (a, b) {
+        return a.score - b.score
+      })
+      for (var j = 0; j < classementGlobal.length; j++) {
+        classementGlobal[j].rang = j + 1
+      }
       res.json({
         message: 'connected',
         meilleur_score: user.meilleur_score,
-        historique: user.historique
+        historique: user.historique,
+        classement_global: classementGlobal
       })
     }
   } else {
@@ -75,9 +90,26 @@ app.post('/api/score', (req, res) => {
     numeroPartie: user.historique.length + 1,
     score: req.body.score
   })
+  const classement = classementGlobal.find(v => v.username === user.username)
+  if (!classement) {
+    classementGlobal.push({
+      username: req.body.login,
+      score: req.body.meilleur_score,
+      rang: null
+    })
+  } else {
+    classement.score = req.body.meilleur_score
+  }
+  classementGlobal.sort(function (a, b) {
+    return a.score - b.score
+  })
+  for (var j = 0; j < classementGlobal.length; j++) {
+    classementGlobal[j].rang = j + 1
+  }
   res.json({
     message: 'score actualiser',
-    historique: user.historique
+    historique: user.historique,
+    classement_global: classementGlobal
   })
 })
 
