@@ -19,7 +19,7 @@
       counter
       @click:append="show_mdp = !show_mdp"
     ></v-text-field>
-    <v-btn @click="login" block rounded>Inscription</v-btn>
+    <v-btn @click="addLog" block rounded>Inscription</v-btn>
     <p v-show="message_score_profile">{{message_connexion}}</p>
   </v-container>
 </template>
@@ -37,28 +37,27 @@ export default {
   }),
   methods: {
     async addLog () {
-      const response = await this.axios.post(this.url + '/api/addLog', {
-        login: this.identifiant,
-        password: this.mdp
-      })
-      this.alerte_connexion = true
-      if (response.data.message === 'user created succesfull') {
-        this.page_accueille = true
-        this.log = false
-        this.inscription = false
-        this.type_alerte_connexion = 'success'
-        this.message_connexion =
-          'Votre profil a été créé avec succès, vous pouvez maintenant vous connecter!'
-        this.identifiant = ''
-        this.mdp = ''
-      } else if (
-        response.data.message === 'user already exist, please enter new id'
-      ) {
-        this.type_alerte_connexion = 'error'
-        this.message_connexion =
-          "Ce nom d'utilisateur est déjà utilisé, veuillez en utiliser un nouveau!"
+      if (this.identifiant !== '' && this.mdp !== '') {
+        const response = await this.axios.post(this.url + '/api/addLog', {
+          login: this.identifiant,
+          password: this.mdp
+        })
+        if (response.data.message === 'user created succesfull') {
+          this.message_score_profile = true
+          this.message_connexion = 'Votre profil a été créé avec succès, vous pouvez maintenant vous connecter!'
+          this.identifiant = ''
+          this.mdp = ''
+        } else if (
+          response.data.message === 'user already exist, please enter new id'
+        ) {
+          this.message_score_profile = true
+          this.message_connexion = "Ce nom d'utilisateur est déjà utilisé, veuillez en utiliser un nouveau!"
+        }
+        console.log('response is:', response)
+      } else {
+        this.message_score_profile = true
+        this.message_connexion = 'Les deux champs sont requis'
       }
-      console.log('response is:', response)
     },
     async retour_page_accueille () {
       this.$router.push('/PageAccueille')

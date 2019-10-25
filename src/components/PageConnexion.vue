@@ -44,11 +44,16 @@ export default {
           password: this.mdp
         })
         if (response.data.message === 'connected') {
+          this.message_score_profile = false
           this.$router.push('/PageProfile')
         } else if (response.data.message === "user doesn't exist") {
+          this.message_score_profile = true
           this.message_connexion = "Nom d'utilisateur ou mot de passe incorecte"
         }
         console.log('response is:', response)
+      } else {
+        this.message_score_profile = true
+        this.message_connexion = 'Les deux champs sont requis'
       }
     },
     async retour_page_accueille () {
