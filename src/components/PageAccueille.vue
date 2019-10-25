@@ -22,11 +22,9 @@ export default {
   methods: {
     async Connexion () {
       this.$router.push('/PageConnexion')
-      this.$router.go(2)
     },
     async Inscription () {
       this.$router.push('/PageInscription')
-      this.$router.go(1)
     }
   }
 }

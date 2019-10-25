@@ -83,6 +83,15 @@ app.post('/api/login', (req, res) => {
   }
 })
 
+app.get('/api/Historique', (req, res) => {
+  const user = users.find(u => u.username === req.body.login && u.password === req.body.password)
+  res.json({
+    message: 'Historique et meilleur score correctement récupérés',
+    historique: user.historique,
+    meilleur_score: user.meilleur_score
+  })
+})
+
 app.post('/api/score', (req, res) => {
   const user = users.find(u => u.username === req.body.login && u.password === req.body.password)
   user.meilleur_score = req.body.meilleur_score

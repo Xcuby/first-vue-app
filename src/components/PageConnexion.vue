@@ -1,32 +1,59 @@
 <template>
-<v-container class="grey lighten-5">
-      <div v-show="page_accueille">
-        <v-btn block rounded color="primary" @click="logout_init_connexion" x-large>Connectez-vous</v-btn>
-        <p></p>
-        <v-btn block rounded color="secondary" @click="page_inscription" x-large>Inscrivez-vous</v-btn>
-      </div>
-      <div v-show="log">
-        <v-btn @click="retour_page_accueille" rounded>Retour</v-btn>
-        <v-text-field
-          label="Identifiant"
-          filled
-          v-model="identifiant"
-          :rules="[rules_mdp_id.required, rules_mdp_id.min]"
-          hint="Au moins 4 caracteres"
-          counter
-        ></v-text-field>
-        <v-text-field
-          v-model="mdp"
-          :append-icon="show_mdp ? 'Cacher' : 'Afficher'"
-          :rules="[rules_mdp_id.required, rules_mdp_id.min]"
-          :type="show_mdp ? 'text' : 'password'"
-          label="Mot de passe"
-          hint="Au moins 4 caracteres"
-          counter
-          @click:append="show_mdp = !show_mdp"
-        ></v-text-field>
-        <v-btn @click="login" v-show="connexion" block rounded color="primary">Connexion</v-btn>
-        <v-btn @click="addLog" v-show="inscription" block rounded color="primary">Inscription</v-btn>
-      </div>
-</v-container>
+  <v-container class="grey lighten-5">
+    <v-btn @click="retour_page_accueille" rounded>Retour</v-btn>
+    <v-text-field
+      label="Identifiant"
+      filled
+      v-model="identifiant"
+      :rules="[rules_mdp_id.required]"
+      hint="Champs requis"
+      counter
+    ></v-text-field>
+    <v-text-field
+      v-model="mdp"
+      :append-icon="show_mdp ? 'Cacher' : 'Afficher'"
+      :rules="[rules_mdp_id.required]"
+      :type="show_mdp ? 'text' : 'password'"
+      label="Mot de passe"
+      hint="Champs requis"
+      counter
+      @click:append="show_mdp = !show_mdp"
+    ></v-text-field>
+    <v-btn @click="login" block rounded>Connexion</v-btn>
+    <p v-show="message_score_profile">{{message_connexion}}</p>
+  </v-container>
 </template>
+<script>
+export default {
+  data: () => ({
+    message_score_profile: false,
+    message_connexion: '',
+    identifiant: '',
+    mdp: '',
+    show_mdp: false,
+    rules_mdp_id: {
+      required: value => !!value || 'Champ requis'
+    }
+  }),
+  methods: {
+    async login () {
+      // connecter l'utilisateur
+      if (this.identifiant !== '' && this.mdp !== '') {
+        const response = await this.axios.post(this.url + '/api/login', {
+          login: this.identifiant,
+          password: this.mdp
+        })
+        if (response.data.message === 'connected') {
+          this.$router.push('/PageProfile')
+        } else if (response.data.message === "user doesn't exist") {
+          this.message_connexion = "Nom d'utilisateur ou mot de passe incorecte"
+        }
+        console.log('response is:', response)
+      }
+    },
+    async retour_page_accueille () {
+      this.$router.push('/PageAccueille')
+    }
+  }
+}
+</script>
