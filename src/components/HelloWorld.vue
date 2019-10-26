@@ -62,6 +62,7 @@
           <v-btn @click="historic" block rounded color="secondary">Historique personnel</v-btn>
           <p></p>
           <v-btn
+          
             @click="classement_general"
             block
             rounded

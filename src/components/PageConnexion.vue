@@ -19,7 +19,7 @@
       counter
       @click:append="show_mdp = !show_mdp"
     ></v-text-field>
-    <v-btn @click="login" block rounded>Connexion</v-btn>
+    <v-btn color = 'red' @click="login" block rounded>Connexion</v-btn>
     <p v-show="message_score_profile">{{message_connexion}}</p>
   </v-container>
 </template>
@@ -39,7 +39,7 @@ export default {
     async login () {
       // connecter l'utilisateur
       if (this.identifiant !== '' && this.mdp !== '') {
-        const response = await this.axios.post(this.url + '/api/login', {
+        const response = await this.axios.post('http://localhost:4000/api/login', {
           login: this.identifiant,
           password: this.mdp
         })
