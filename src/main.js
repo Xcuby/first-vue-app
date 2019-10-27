@@ -4,7 +4,8 @@ import App from './App.vue'
 import vuetify from './plugins/vuetify'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
-import PageAccueilleProfile from './components/PageAccueilleProfile'
+import PageAccueille from './components/PageAccueille'
+import PageProfile from './components/PageProfile'
 import Quizz from './components/Quizz'
 
 Vue.config.productionTip = false
@@ -13,9 +14,10 @@ Vue.use(VueAxios, axios)
 Vue.use(VueRouter)
 
 const routes = [
-  { path: '/PageAccueilleProfile', component: PageAccueilleProfile, meta: { requiresAuth: true } },
-  { path: '/', component: PageAccueilleProfile, meta: { requiresAuth: false } },
-  { path: '/Quizz', component: Quizz, meta: { requiresAuth: false } }
+  { path: '/PageAccueille', component: PageAccueille, meta: { requiresAuth: false } },
+  { path: '/PageProfile', component: PageProfile, meta: { requiresAuth: true } },
+  { path: '/', component: PageAccueille, meta: { requiresAuth: false } },
+  { path: '/Quizz', component: Quizz, meta: { requiresAuth: true } }
 ]
 
 const router = new VueRouter({ routes,
