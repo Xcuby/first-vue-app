@@ -29,6 +29,10 @@ app.use(bodyParser.json())
 const path = require('path')
 app.use(express.static(path.join(__dirname, 'dist/')))
 
+var username = ''
+
+var password = ''
+
 const users = [{
   username: 'admin',
   password: 'Xav',
@@ -61,6 +65,8 @@ app.post('/api/login', (req, res) => {
       })
     } else {
       // connect the user
+      username = req.body.login
+      password = req.body.password
       req.session.userId = 1000 // connect the user, and change the id
       classementGlobal.sort(function (a, b) {
         return a.score - b.score
@@ -68,6 +74,7 @@ app.post('/api/login', (req, res) => {
       for (var j = 0; j < classementGlobal.length; j++) {
         classementGlobal[j].rang = j + 1
       }
+
       res.json({
         message: 'connected',
         meilleur_score: user.meilleur_score,
@@ -83,12 +90,43 @@ app.post('/api/login', (req, res) => {
   }
 })
 
-app.get('/api/Historique', (req, res) => {
-  const user = users.find(u => u.username === req.body.login && u.password === req.body.password)
+app.get('/api/historique', (req, res) => {
+  const user = users.find(u => u.username === username && u.password === password)
   res.json({
-    message: 'Historique et meilleur score correctement récupérés',
-    historique: user.historique,
-    meilleur_score: user.meilleur_score
+    message: 'Historique correctement récupérés',
+    historique: user.historique
+  })
+})
+
+app.get('/api/meilleurScore', (req, res) => {
+  const user = users.find(u => u.username === username && u.password === password)
+  res.json({
+    message: 'Meilleur score actualisé',
+    meilleur_score: user.meilleur_score,
+    username: username
+  })
+})
+
+app.post('/api/classement', (req, res) => {
+  const classement = classementGlobal.find(v => v.username === username)
+  if (!classement) {
+    classementGlobal.push({
+      username: req.body.login,
+      score: req.body.meilleur_score,
+      rang: null
+    })
+  } else {
+    classement.score = req.body.meilleur_score
+  }
+  classementGlobal.sort(function (a, b) {
+    return a.score - b.score
+  })
+  for (var j = 0; j < classementGlobal.length; j++) {
+    classementGlobal[j].rang = j + 1
+  }
+  res.json({
+    message: 'Classement global correctement récupérés',
+    classementGlobal: classement
   })
 })
 
