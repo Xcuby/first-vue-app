@@ -98,7 +98,7 @@ export default {
       },
       {
         consigne:
-          'Entrez le points communs entre ces différentes images, entrez votre réponse dans le champ de texte!'
+          'Entrez le point commun entre ces différentes images, entrez votre réponse dans le champ de texte!'
       },
       {
         consigne:
@@ -108,9 +108,15 @@ export default {
         consigne:
           "Quel est la personne (ou objet) la plus âgée (ou le plus ancien), cliquez directement sur l'image!"
       },
-      { consigne: 'Qui est le premier président des Etats-Unis?' },
-      { consigne: 'Où Abraham Lincoln a t-il été assassiné?' },
-      { consigne: 'Quand a eu lieu la bataille du Chemin des Dames?' }
+      { consigne: "Qui est le premier président des Etats-Unis, cliquez directement sur l'image!" },
+      { consigne: "Où Abraham Lincoln a t-il été assassiné, cliquez directement sur l'image!" },
+      { consigne: "Quand a eu lieu la bataille du Chemin des Dames, cliquez directement sur l'image!" },
+      { consigne: "Quel animal aquatique est-il le plus rapide parmis les animaux suivants, cliquez directement sur l'image!" },
+      { consigne: "Quel animal terrestre est-il le plus rapide parmis les animaux suivants, cliquez directement sur l'image!" },
+      { consigne: "Quel est l'intrus parmis les animaux suivants, cliquez directement sur l'image!" },
+      { consigne: "Quel monnaie existe encore parmis les suivantes, cliquez directement sur l'image!" },
+      { consigne: 'Quel est le courant artistique de ces tableaux, entrez votre réponse dans le champ de texte!' },
+      { consigne: "Quel est l'animal (ou objet) le plus lourd parmis les suivants, cliquez directement sur l'image!" }
     ],
     image: [
       {
@@ -315,7 +321,182 @@ export default {
         color: '',
         type: 6,
         reponse: false
+      },
+      {
+        src: require('@/assets/dauphin.jpeg'),
+        titre: 'Dauphin',
+        color: '',
+        type: 7,
+        reponse: false,
+        typeResp: 'click'
+      },
+      {
+        src: require('@/assets/Marlin_bleu.jpg'),
+        titre: 'Marlin bleu',
+        color: '',
+        type: 7,
+        reponse: false
+      },
+      {
+        src: require('@/assets/requin.jpg'),
+        titre: 'Requin',
+        color: '',
+        type: 7,
+        reponse: false
+      },
+      {
+        src: require('@/assets/baleine.jpg'),
+        titre: 'Baleine',
+        color: '',
+        type: 7,
+        reponse: false
+      },
+      {
+        src: require('@/assets/Girafe.jpeg'),
+        titre: 'Girafe',
+        color: '',
+        type: 8,
+        reponse: false,
+        typeResp: 'click'
+      },
+      {
+        src: require('@/assets/Lion.jpg'),
+        titre: 'Lion',
+        color: '',
+        type: 8,
+        reponse: false
+      },
+      {
+        src: require('@/assets/Panthere.jpg'),
+        titre: 'Panthère',
+        color: '',
+        type: 8,
+        reponse: false
+      },
+      {
+        src: require('@/assets/Guépard.jpg'),
+        titre: 'Guépard',
+        color: '',
+        type: 8,
+        reponse: false
+      },
+      {
+        src: require('@/assets/cameleon.jpg'),
+        titre: 'Cameleon',
+        color: '',
+        type: 9,
+        reponse: false,
+        typeResp: 'click'
+      },
+      {
+        src: require('@/assets/salamandre.jpg'),
+        titre: 'Salamandre',
+        color: '',
+        type: 9,
+        reponse: false
+      },
+      {
+        src: require('@/assets/Tortue.jpg'),
+        titre: 'Tortue',
+        color: '',
+        type: 9,
+        reponse: false
+      },
+      {
+        src: require('@/assets/crocodile.jpg'),
+        titre: 'Crocodile',
+        color: '',
+        type: 9,
+        reponse: false
+      },
+      {
+        src: require('@/assets/renminbi.jpg'),
+        titre: 'Le renminbi',
+        color: '',
+        type: 10,
+        reponse: false,
+        typeResp: 'click'
+      },
+      {
+        src: require('@/assets/pesète.jpg'),
+        titre: 'La pesète',
+        color: '',
+        type: 10,
+        reponse: false
+      },
+      {
+        src: require('@/assets/franc.jpg'),
+        titre: 'Le franc',
+        color: '',
+        type: 10,
+        reponse: false
+      },
+      {
+        src: require('@/assets/schilling.jpg'),
+        titre: 'Le schilling',
+        color: '',
+        type: 10,
+        reponse: false
+      },
+      {
+        src: require('@/assets/monet.jpg'),
+        titre: 'Impression, soleil levant de Monet',
+        color: '',
+        type: 11,
+        reponse: '',
+        typeResp: 'text'
+      },
+      {
+        src: require('@/assets/Manet.jpg'),
+        titre: "Le Déjeuner sur l'herbe de Manet",
+        color: '',
+        type: 11,
+        reponse: ''
+      },
+      {
+        src: require('@/assets/morisot.jpg'),
+        titre: 'Le Berceau de Morisot',
+        color: '',
+        type: 11,
+        reponse: ''
+      },
+      {
+        src: require('@/assets/Degas.jpg'),
+        titre: 'La Classe de danse de Degas',
+        color: '',
+        type: 11,
+        reponse: ''
+      },
+      {
+        src: require('@/assets/baleine.jpg'),
+        titre: 'Baleine bleue',
+        color: '',
+        type: 12,
+        reponse: false,
+        typeResp: 'click'
+      },
+      {
+        src: require('@/assets/camion.jpg'),
+        titre: 'Camion citerne',
+        color: '',
+        type: 12,
+        reponse: false
+      },
+      {
+        src: require('@/assets/Avion.jpg'),
+        titre: 'Airbus A220',
+        color: '',
+        type: 12,
+        reponse: false
+      },
+      {
+        src: require('@/assets/Bateau_croisiere.jpg'),
+        titre: 'Navire de croisière',
+        color: '',
+        type: 12,
+        reponse: false
       }
+
     ],
     intelligence: [
       {

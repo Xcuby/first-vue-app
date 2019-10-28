@@ -51,7 +51,7 @@ const classementGlobal = [
   }
 ]
 
-const questions = [3, 'drapeau', '1998', 1, 2, 0, 2]
+const questions = [3, 'drapeau', '1998', 1, 2, 0, 2, 1, 3, 1, 0, 'impressionnisme', 3]
 
 app.post('/api/login', (req, res) => {
   if (!req.session.userId) {
