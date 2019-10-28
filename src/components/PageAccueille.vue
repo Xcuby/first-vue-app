@@ -13,9 +13,10 @@
         <p></p>
         <v-btn block rounded color="secondary" @click="page_inscription" x-large>Inscrivez-vous</v-btn>
       </div>
-      <div v-show="log">
+      <div v-show="connexion">
         <v-btn @click="retour_page_accueille" rounded>Retour</v-btn>
         <v-text-field
+          @keyup.enter="login"
           label="Identifiant"
           filled
           v-model="identifiant"
@@ -24,6 +25,7 @@
           counter
         ></v-text-field>
         <v-text-field
+          @keyup.enter="login"
           v-model="mdp"
           :append-icon="show_mdp ? 'Cacher' : 'Afficher'"
           :rules="[rules_mdp_id.required]"
@@ -33,8 +35,31 @@
           counter
           @click:append="show_mdp = !show_mdp"
         ></v-text-field>
-        <v-btn @click="login" v-show="connexion" block rounded color="primary">Connexion</v-btn>
-        <v-btn @click="addLog" v-show="inscription" block rounded color="primary">Inscription</v-btn>
+        <v-btn @click="login" block rounded color="primary">Connexion</v-btn>
+      </div>
+      <div v-show="inscription">
+        <v-btn @click="retour_page_accueille" rounded>Retour</v-btn>
+        <v-text-field
+          @keyup.enter="addLog"
+          label="Identifiant"
+          filled
+          v-model="identifiant"
+          :rules="[rules_mdp_id.required]"
+          hint="Champs requis"
+          counter
+        ></v-text-field>
+        <v-text-field
+          @keyup.enter="addLog"
+          v-model="mdp"
+          :append-icon="show_mdp ? 'Cacher' : 'Afficher'"
+          :rules="[rules_mdp_id.required]"
+          :type="show_mdp ? 'text' : 'password'"
+          label="Mot de passe"
+          hint="Champs requis"
+          counter
+          @click:append="show_mdp = !show_mdp"
+        ></v-text-field>
+        <v-btn @click="addLog" block rounded color="primary">Inscription</v-btn>
       </div>
       <div>
         <v-alert
@@ -53,8 +78,6 @@ export default {
   data: () => ({
     identifiant: '',
     mdp: '',
-    fin: false,
-    log: false,
     m: 0,
     show_mdp: false,
     alerte_connexion: false,
@@ -91,7 +114,8 @@ export default {
         })
         this.alerte_connexion = true
         if (response.data.message === 'connected') {
-          this.log = false
+          this.inscription = false
+          this.connexion = false
           this.profil = true
           this.alerte_connexion = false
           this.meilleur_score = response.data.meilleur_score
@@ -120,7 +144,6 @@ export default {
         this.alerte_connexion = true
         if (response.data.message === 'user created succesfull') {
           this.page_accueille = true
-          this.log = false
           this.inscription = false
           this.type_alerte_connexion = 'success'
           this.message_connexion =
@@ -142,7 +165,6 @@ export default {
       this.page_accueille = true
       this.inscription = false
       this.connexion = false
-      this.log = false
       this.identifiant = ''
       this.mdp = ''
     },
@@ -150,13 +172,11 @@ export default {
     page_inscription () {
       this.page_accueille = false
       this.inscription = true
-      this.log = true
     },
 
     page_connexion () {
       this.page_accueille = false
       this.connexion = true
-      this.log = true
     }
   }
 }

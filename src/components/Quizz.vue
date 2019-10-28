@@ -9,7 +9,7 @@
       <v-btn @click="logout">Déconnexion</v-btn>
     </v-app-bar>
     <v-container class="grey lighten-5">
-       <div v-show="jouer" class="text-center display-1" v-text="enonce[image[0+m].type].consigne"></div>
+       <div v-show="!fin" class="text-center display-1" v-text="enonce[image[0+m].type].consigne"></div>
       <div v-show="fin" class="text-center display-4" v-text="Score()"></div>
       <v-row align="center" justify="center">
         <v-img
@@ -34,7 +34,7 @@
           <v-col :key="n">
             <v-hover v-slot:default="{ hover }">
               <v-card
-                v-show="jouer"
+                v-show="!fin"
                 class="pa-2"
                 :color="image[n-1+m].color"
                 v-on:click="validationCard(n-1)"
@@ -59,23 +59,24 @@
       <v-row justify:space arround>
         <v-col md="10">
           <v-text-field
-            v-show="montrerChampDeTexte(image[m].typeResp) && jouer"
+            v-show="montrerChampDeTexte(image[m].typeResp) && !fin"
             :background-color="couleurText"
             v-model="reponse"
-            @click="resetCouleur()"
-            @keyup.enter="validation(), validationText()"
+            @click="resetCouleur"
+            @keyup.enter="validation, validationText"
             label="Entrez votre réponse"
             filled
           ></v-text-field>
         </v-col>
         <div class="my-3">
           <v-btn
-            v-show="montrerChampDeTexte(image[m].typeResp) && jouer"
+            v-show="montrerChampDeTexte(image[m].typeResp) && !fin"
             x-large
             color="primary"
-            @click="validation(), validationText()"
+            @click="validation, validationText"
           >Valider</v-btn>
         </div>
+      </v-row>
     </v-container>
   </v-app>
 </template>
@@ -87,6 +88,9 @@ export default {
     m: 0,
     valider: false,
     couleurText: '',
+    nombreDeFaute: 0,
+    fin: false,
+    reponse: '',
     enonce: [
       {
         consigne:
@@ -373,52 +377,107 @@ export default {
    async logout () {
      const response = await this.axios.get(this.url + '/api/logout')
      if (response.data.message === 'you are now disconnected') {
-       this.profil = false
-       this.presentation = true
-       this.rank = false
-       this.historique = false
+       this.m = 0
        console.log('response is:', response)
        this.$router.push('./PageAccueille')
      }
    },
-   async historic () {
-     this.historique = true
-     const response = await this.axios.get(this.url + '/api/historique', {})
-     this.score = response.data.historique
+   async actualiser_score_utilisateur () {
+     this.fin = false
+     this.m = 0
+     await this.axios.post(this.url + '/api/score', {
+       score: this.nombreDeFaute
+     })
+     this.$router.push('./PageProfile')
    },
 
-   async classement_general () {
-     this.rank = true
-     const response = await this.axios.post(this.url + '/api/classement', {})
-     this.classement_global = response.data.classementGlobal
-     console.log(this.classement_global)
-   },
-   retourProfil () {
-     this.presentation = false
-     this.profil = true
-     this.rank = false
-     this.historique = false
-   },
-   async jouer () {
-     this.profil = false
-     this.presentation = true
-     this.rank = false
-     this.historique = false
-     this.$router.push('/Quizz')
-   },
-   async pageProfil () {
-     const response = await this.axios.get(this.url + '/api/meilleurScore', {})
-     this.meilleur_score = response.data.meilleur_score
-     this.identifiant = response.data.username
-     if (this.meilleur_score === null) {
-       this.message_score_profile = false
-     } else {
-       this.message_score_profile = true
+   async validationCard (indice) {
+     if (this.image[this.m].typeResp === 'click') {
+       const response = await this.axios.post(this.url + '/api/reponse', {
+         type: this.image[indice + this.m].type,
+         reponse: indice
+       })
+       console.log('response is:', response)
+       if (response.data.message === 'true') {
+         this.image[indice + this.m].color = 'green'
+       } else {
+         if (this.image[indice + this.m].color === '') {
+           this.nombreDeFaute++
+           this.image[indice + this.m].color = 'red'
+         }
+       }
      }
-     this.presentation = false
-     this.profil = true
-     this.rank = false
-     this.historique = false
+     if (
+       this.image[indice + this.m].color !== '' &&
+        this.image.length - this.m > 4
+     ) {
+       for (var i = 0; i < 4; i++) {
+         this.image[i + this.m].color = ''
+       }
+       this.m = this.m + 4
+       return ''
+     } else if (
+       this.image.length - this.m === 4 &&
+        this.image[indice + this.m].color !== ''
+     ) {
+       this.fin = true
+       for (var j = 0; j < 4; j++) {
+         this.image[j + this.m].color = ''
+       }
+       return ''
+     }
+   },
+   async validationText () {
+     if (this.image[this.m].typeResp === 'text' && this.valider === true) {
+       const response = await this.axios.post(this.url + '/api/reponse', {
+         type: this.image[this.m].type,
+         reponse: this.reponse.toLowerCase()
+       })
+       console.log('response is:', response)
+       if (response.data.message === 'true') {
+         this.couleurText = 'green'
+       } else {
+         this.nombreDeFaute++
+         this.couleurText = 'red'
+       }
+     }
+     if (this.couleurText !== '' && this.image.length - this.m > 4) {
+       this.m = this.m + 4
+       this.couleurText = ''
+       this.reponse = ''
+       return ''
+     } else if (this.couleurText !== '' && this.image.length - this.m > 4) {
+       this.fin = true
+       this.couleurText = ''
+       this.reponse = ''
+       return ''
+     }
+   },
+   validation () {
+     this.valider = true
+   },
+   resetCouleur () {
+     this.couleurText = ''
+     this.reponse = ''
+     return ''
+   },
+   montrerChampDeTexte (typeResp) {
+     if (this.fin || typeResp === 'click') {
+       return false
+     } else {
+       return true
+     }
+   },
+   Score () {
+     const fautes = this.nombreDeFaute
+     return fautes + ' faute(s) !'
+   },
+   fauteFinal () {
+     if (this.nombreDeFaute > 10) {
+       return 10
+     } else {
+       return this.nombreDeFaute
+     }
    }
  }
 }

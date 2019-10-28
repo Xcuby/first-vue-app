@@ -31,8 +31,6 @@ app.use(express.static(path.join(__dirname, 'dist/')))
 
 var username = ''
 
-var password = ''
-
 const users = [{
   username: 'admin',
   password: 'Xav',
@@ -66,20 +64,9 @@ app.post('/api/login', (req, res) => {
     } else {
       // connect the user
       username = req.body.login
-      password = req.body.password
       req.session.userId = 1000 // connect the user, and change the id
-      classementGlobal.sort(function (a, b) {
-        return a.score - b.score
-      })
-      for (var j = 0; j < classementGlobal.length; j++) {
-        classementGlobal[j].rang = j + 1
-      }
-
       res.json({
-        message: 'connected',
-        meilleur_score: user.meilleur_score,
-        historique: user.historique,
-        classement_global: classementGlobal
+        message: 'connected'
       })
     }
   } else {
@@ -132,6 +119,20 @@ app.post('/api/classement', (req, res) => {
 })
 
 app.post('/api/score', (req, res) => {
+  const user = users.find(u => u.username === username)
+  user.historique.unshift({
+    numeroPartie: user.historique.length + 1,
+    score: req.body.score
+  })
+  if (user.meilleur_score > req.body.meilleur_score) {
+    user.meilleur_score = req.body.meilleur_score
+  }
+  res.json({
+    message: 'score actualisé'
+  })
+})
+
+app.post('/api/scoreTest', (req, res) => {
   const user = users.find(u => u.username === req.body.login && u.password === req.body.password)
   user.meilleur_score = req.body.meilleur_score
   user.historique.unshift({
