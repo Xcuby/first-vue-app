@@ -91,7 +91,7 @@ app.post('/api/login', (req, res) => {
 })
 
 app.get('/api/historique', (req, res) => {
-  const user = users.find(u => u.username === username && u.password === password)
+  const user = users.find(u => u.username === username)
   res.json({
     message: 'Historique correctement récupérés',
     historique: user.historique
@@ -99,7 +99,7 @@ app.get('/api/historique', (req, res) => {
 })
 
 app.get('/api/meilleurScore', (req, res) => {
-  const user = users.find(u => u.username === username && u.password === password)
+  const user = users.find(u => u.username === username)
   res.json({
     message: 'Meilleur score actualisé',
     meilleur_score: user.meilleur_score,
@@ -109,14 +109,15 @@ app.get('/api/meilleurScore', (req, res) => {
 
 app.post('/api/classement', (req, res) => {
   const classement = classementGlobal.find(v => v.username === username)
+  const user = users.find(u => u.username === username)
   if (!classement) {
     classementGlobal.push({
-      username: req.body.login,
-      score: req.body.meilleur_score,
+      username: username,
+      score: user.meilleur_score,
       rang: null
     })
   } else {
-    classement.score = req.body.meilleur_score
+    classement.score = user.meilleur_score
   }
   classementGlobal.sort(function (a, b) {
     return a.score - b.score
@@ -126,7 +127,7 @@ app.post('/api/classement', (req, res) => {
   }
   res.json({
     message: 'Classement global correctement récupérés',
-    classementGlobal: classement
+    classementGlobal: classementGlobal
   })
 })
 

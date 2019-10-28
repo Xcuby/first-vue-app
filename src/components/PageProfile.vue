@@ -6,11 +6,17 @@
         <span class="font-weight-light">test de culture générale/QI</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn v-show="!page_accueille && !log" @click="logout">Déconnexion</v-btn>
+      <v-btn @click="logout">Déconnexion</v-btn>
     </v-app-bar>
     <v-container class="grey lighten-5">
+      <div v-show="presentation">
+        <h1>4 images</h1>
+        <v-img></v-img>
+        <p>Un moyen de tester son QI efficacement (sans aucune garantie de fiabilité des résultats biensûr)</p>
+        <v-btn v-show="presentation" @click="pageProfil" block rounded color="primary">Accèdé à mon profil</v-btn>
+      </div>
       <div v-show="profil">
-        <v-btn v-show="historique || rank" @click="retour_profil" rounded>Retour</v-btn>
+        <v-btn v-show="historique || rank" @click="retourProfil" rounded>Retour</v-btn>
         <div v-show="!historique && !rank">
           <h1>Bienvenue {{identifiant}},</h1>
           <div v-show="message_score_profile">
@@ -21,7 +27,7 @@
           <div v-show="!message_score_profile">
             <p>Vous n'avez pas encore de meilleur score, jouer au moins une fois pour en avoir un!</p>
           </div>
-          <v-btn block rounded color="primary" @click="Jouer">Jouer !</v-btn>
+          <v-btn block rounded color="primary" @click="jouer">Jouer !</v-btn>
           <p></p>
           <v-btn @click="historic" block rounded color="secondary">Historique personnel</v-btn>
           <p></p>
@@ -61,20 +67,72 @@
 </template>
 
 <script>
-import { METHODS } from 'http';
 export default {
   data: () => ({
-  historique: false,
-  rank: false,
-  jouer: false,
-  message_score_profile: false,
-  score: [],
-  classement_global: [],
-  type_alerte_connexion: '',
-  meilleur_score: 0
-})
-methods:
+    presentation: true,
+    profil: false,
+    historique: false,
+    rank: false,
+    message_score_profile: false,
+    score: [],
+    classement_global: [],
+    type_alerte_connexion: '',
+    meilleur_score: null,
+    identifiant: '',
+    url: 'http://localhost:4000'
+  }),
+  methods:
  {
+   async logout () {
+     const response = await this.axios.get(this.url + '/api/logout')
+     if (response.data.message === 'you are now disconnected') {
+       this.profil = false
+       this.presentation = true
+       this.rank = false
+       this.historique = false
+       console.log('response is:', response)
+       this.$router.push('./PageAccueille')
+     }
+   },
+   async historic () {
+     this.historique = true
+     const response = await this.axios.get(this.url + '/api/historique', {})
+     this.score = response.data.historique
+   },
 
+   async classement_general () {
+     this.rank = true
+     const response = await this.axios.post(this.url + '/api/classement', {})
+     this.classement_global = response.data.classementGlobal
+     console.log(this.classement_global)
+   },
+   retourProfil () {
+     this.presentation = false
+     this.profil = true
+     this.rank = false
+     this.historique = false
+   },
+   async jouer () {
+     this.profil = false
+     this.presentation = true
+     this.rank = false
+     this.historique = false
+     this.$router.push('/Quizz')
+   },
+   async pageProfil () {
+     const response = await this.axios.get(this.url + '/api/meilleurScore', {})
+     this.meilleur_score = response.data.meilleur_score
+     this.identifiant = response.data.username
+     if (this.meilleur_score === null) {
+       this.message_score_profile = false
+     } else {
+       this.message_score_profile = true
+     }
+     this.presentation = false
+     this.profil = true
+     this.rank = false
+     this.historique = false
+   }
+ }
 }
 </script>
