@@ -10,22 +10,23 @@
     </v-app-bar>
     <v-container class="grey lighten-5">
       <div v-show="presentation">
-        <h1>4 images</h1>
-        <v-img></v-img>
-        <p>Un moyen de tester son QI efficacement (sans aucune garantie de fiabilité des résultats biensûr)</p>
+        <h1 class="text-center display-4">4 images</h1>
+        <v-img src='@/assets/PageAccueille.jpg'></v-img>
+        <p class="text-center display-1">Un moyen de tester son QI efficacement</p>
+        <p class="text-center display-1">(sans aucune garantie de fiabilité des résultats bien sûr)</p>
         <v-btn v-show="presentation" @click="pageProfil" block rounded color="primary">Accèdé à mon profil</v-btn>
       </div>
       <div v-show="profil">
         <v-btn v-show="historique || rank" @click="retourProfil" rounded>Retour</v-btn>
         <div v-show="!historique && !rank">
-          <h1>Bienvenue {{identifiant}},</h1>
+          <h1 class="display-1">Bienvenue {{identifiant}},</h1>
           <div v-show="message_score_profile">
-            <p
-              class="text-center font-weight-medium"
-            >Votre meilleur score est de {{meilleur_score}} faute(s)</p>
+            <h2
+              class="text-center font-weight-light"
+            >Votre meilleur score est de {{meilleur_score}} faute(s)</h2>
           </div>
           <div v-show="!message_score_profile">
-            <p>Vous n'avez pas encore de meilleur score, jouer au moins une fois pour en avoir un!</p>
+            <h2 class="text-center font-weight-light">Vous n'avez pas encore de meilleur score, jouer au moins une fois pour en avoir un!</h2>
           </div>
           <v-btn block rounded color="primary" @click="jouer">Jouer !</v-btn>
           <p></p>
@@ -49,7 +50,7 @@
             ></v-data-table>
           </div>
           <div v-show="!message_score_profile">
-            <p>Votre historique est vide pour l'instant !</p>
+            <h1 class="text-center font-weight-light">Votre historique est vide pour l'instant !</h1>
           </div>
         </div>
         <div v-show="rank" rounded color="primary">
@@ -78,7 +79,7 @@ export default {
     classement_global: [],
     type_alerte_connexion: '',
     meilleur_score: null,
-    identifiant: '',
+    identifiant: sessionStorage.username,
     url: 'http://localhost:4000'
   }),
   methods:

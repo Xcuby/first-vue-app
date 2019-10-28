@@ -97,14 +97,16 @@ app.get('/api/meilleurScore', (req, res) => {
 app.post('/api/classement', (req, res) => {
   const classement = classementGlobal.find(v => v.username === username)
   const user = users.find(u => u.username === username)
-  if (!classement) {
-    classementGlobal.push({
-      username: username,
-      score: user.meilleur_score,
-      rang: null
-    })
-  } else {
-    classement.score = user.meilleur_score
+  if (user.meilleur_score !== null) {
+    if (!classement) {
+      classementGlobal.push({
+        username: username,
+        score: user.meilleur_score,
+        rang: null
+      })
+    } else {
+      classement.score = user.meilleur_score
+    }
   }
   classementGlobal.sort(function (a, b) {
     return a.score - b.score
@@ -113,7 +115,7 @@ app.post('/api/classement', (req, res) => {
     classementGlobal[j].rang = j + 1
   }
   res.json({
-    message: 'Classement global correctement récupérés',
+    message: 'Classement global correctement actualisé et récupérés',
     classementGlobal: classementGlobal
   })
 })
@@ -124,41 +126,11 @@ app.post('/api/score', (req, res) => {
     numeroPartie: user.historique.length + 1,
     score: req.body.score
   })
-  if (user.meilleur_score > req.body.meilleur_score) {
-    user.meilleur_score = req.body.meilleur_score
+  if (user.meilleur_score > req.body.score || user.meilleur_score === null) {
+    user.meilleur_score = req.body.score
   }
   res.json({
     message: 'score actualisé'
-  })
-})
-
-app.post('/api/scoreTest', (req, res) => {
-  const user = users.find(u => u.username === req.body.login && u.password === req.body.password)
-  user.meilleur_score = req.body.meilleur_score
-  user.historique.unshift({
-    numeroPartie: user.historique.length + 1,
-    score: req.body.score
-  })
-  const classement = classementGlobal.find(v => v.username === user.username)
-  if (!classement) {
-    classementGlobal.push({
-      username: req.body.login,
-      score: req.body.meilleur_score,
-      rang: null
-    })
-  } else {
-    classement.score = req.body.meilleur_score
-  }
-  classementGlobal.sort(function (a, b) {
-    return a.score - b.score
-  })
-  for (var j = 0; j < classementGlobal.length; j++) {
-    classementGlobal[j].rang = j + 1
-  }
-  res.json({
-    message: 'score actualiser',
-    historique: user.historique,
-    classement_global: classementGlobal
   })
 })
 
@@ -200,7 +172,8 @@ app.get('/api/logout', (req, res) => {
       message: 'you are already disconnected'
     })
   } else {
-    req.session.userId = 0
+    username = ''
+    req.session.destroy()
     res.json({
       message: 'you are now disconnected'
     })
@@ -212,7 +185,6 @@ app.get('/api/admin', (req, res) => {
     res.status(401)
     res.json({ message: 'Unauthorized' })
   }
-
   res.json({
     message: 'congrats, you are connected'
   })

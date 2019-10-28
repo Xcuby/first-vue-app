@@ -63,7 +63,7 @@
             :background-color="couleurText"
             v-model="reponse"
             @click="resetCouleur"
-            @keyup.enter="validation, validationText"
+            @keyup.enter="validation (), validationText ()"
             label="Entrez votre réponse"
             filled
           ></v-text-field>
@@ -73,7 +73,7 @@
             v-show="montrerChampDeTexte(image[m].typeResp) && !fin"
             x-large
             color="primary"
-            @click="validation, validationText"
+            @click="validation () , validationText ()"
           >Valider</v-btn>
         </div>
       </v-row>
@@ -388,6 +388,7 @@ export default {
      await this.axios.post(this.url + '/api/score', {
        score: this.nombreDeFaute
      })
+     this.nombreDeFaute = 0
      this.$router.push('./PageProfile')
    },
 

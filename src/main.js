@@ -12,6 +12,7 @@ Vue.config.productionTip = false
 axios.defaults.withCredentials = true
 Vue.use(VueAxios, axios)
 Vue.use(VueRouter)
+Vue.use(VueRouter)
 
 const routes = [
   { path: '/PageAccueille', component: PageAccueille, meta: { requiresAuth: false } },
