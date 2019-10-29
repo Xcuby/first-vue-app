@@ -12,10 +12,10 @@ const session = require('express-session')
 const app = express()
 
 app.use(session({
-  secret: 'Xav', 
+  secret: 'Xav',
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } 
+  cookie: { secure: false }
 }))
 
 app.use(cors({
