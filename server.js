@@ -12,10 +12,10 @@ const session = require('express-session')
 const app = express()
 
 app.use(session({
-  secret: 'blablabla', // changez cette valeur
+  secret: 'Xav', 
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } // ne changez que si vous avez activé le https
+  cookie: { secure: false } 
 }))
 
 app.use(cors({
