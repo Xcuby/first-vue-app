@@ -77,6 +77,9 @@
           >Valider</v-btn>
         </div>
       </v-row>
+      <div v-show="erreurLogin">
+          <v-alert type="error">Vous devez être connecté pour faire le Quizz!</v-alert>
+        </div>
     </v-container>
   </v-app>
 </template>
@@ -91,6 +94,7 @@ export default {
     nombreDeFaute: 0,
     fin: false,
     reponse: '',
+    erreurLogin: false,
     enonce: [
       {
         consigne:
@@ -580,7 +584,9 @@ export default {
          reponse: indice
        })
        console.log('response is:', response)
-       if (response.data.message === 'true') {
+       if (response.data.message === 'Authentification requise') {
+         this.erreurLogin = true
+       } else if (response.data.message === 'true') {
          this.image[indice + this.m].color = 'green'
        } else {
          if (this.image[indice + this.m].color === '') {

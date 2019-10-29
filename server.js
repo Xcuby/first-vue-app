@@ -29,7 +29,7 @@ app.use(bodyParser.json())
 const path = require('path')
 app.use(express.static(path.join(__dirname, 'dist/')))
 
-var username = ''
+var username = null
 
 const users = [{
   username: 'admin',
@@ -86,12 +86,17 @@ app.get('/api/historique', (req, res) => {
 })
 
 app.get('/api/meilleurScore', (req, res) => {
-  const user = users.find(u => u.username === username)
-  res.json({
-    message: 'Meilleur score actualisé',
-    meilleur_score: user.meilleur_score,
-    username: username
-  })
+  if (username !== null) {
+    const user = users.find(u => u.username === username)
+    res.json({
+      message: 'Meilleur score actualisé',
+      meilleur_score: user.meilleur_score
+    })
+  } else {
+    res.json({
+      message: 'Authentification requise'
+    })
+  }
 })
 
 app.post('/api/classement', (req, res) => {
@@ -135,13 +140,19 @@ app.post('/api/score', (req, res) => {
 })
 
 app.post('/api/reponse', (req, res) => {
-  if (questions[req.body.type] === req.body.reponse) {
-    res.json({
-      message: 'true'
-    })
+  if (username !== null) {
+    if (questions[req.body.type] === req.body.reponse) {
+      res.json({
+        message: 'true'
+      })
+    } else {
+      res.json({
+        message: 'false'
+      })
+    }
   } else {
     res.json({
-      message: 'false'
+      message: 'Authentification requise'
     })
   }
 })
@@ -172,8 +183,8 @@ app.get('/api/logout', (req, res) => {
       message: 'you are already disconnected'
     })
   } else {
-    username = ''
-    req.session.destroy()
+    username = null
+    req.session.userId = 0
     res.json({
       message: 'you are now disconnected'
     })
