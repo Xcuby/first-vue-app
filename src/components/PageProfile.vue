@@ -63,6 +63,9 @@
           ></v-data-table>
         </div>
       </div>
+      <div v-show="erreurLogin">
+          <v-alert type="error">Vous devez être connecté pour accèder à votre profile!</v-alert>
+        </div>
     </v-container>
   </v-app>
 </template>
@@ -79,8 +82,9 @@ export default {
     classement_global: [],
     type_alerte_connexion: '',
     meilleur_score: null,
-    identifiant: sessionStorage.username,
-    url: 'http://localhost:4000'
+    identifiant: sessionStorage.identifiant,
+    url: 'http://localhost:4000',
+    erreurLogin: false
   }),
   methods:
  {
@@ -123,16 +127,19 @@ export default {
    async pageProfil () {
      const response = await this.axios.get(this.url + '/api/meilleurScore', {})
      this.meilleur_score = response.data.meilleur_score
-     this.identifiant = response.data.username
-     if (this.meilleur_score === null) {
-       this.message_score_profile = false
+     if (response.data.message === 'Authentification requise') {
+       this.erreurLogin = true
      } else {
-       this.message_score_profile = true
+       if (this.meilleur_score === null) {
+         this.message_score_profile = false
+       } else {
+         this.message_score_profile = true
+       }
+       this.presentation = false
+       this.profil = true
+       this.rank = false
+       this.historique = false
      }
-     this.presentation = false
-     this.profil = true
-     this.rank = false
-     this.historique = false
    }
  }
 }
