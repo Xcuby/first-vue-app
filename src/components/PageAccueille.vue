@@ -91,7 +91,7 @@ export default {
     score: [],
     classement_global: [],
     type_alerte_connexion: '',
-    url: 'http://localhost:4000',
+    url: '',
     rules_mdp_id: {
       required: value => !!value || 'Champ requis'
     },

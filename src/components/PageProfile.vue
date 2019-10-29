@@ -83,7 +83,7 @@ export default {
     type_alerte_connexion: '',
     meilleur_score: null,
     identifiant: sessionStorage.identifiant,
-    url: 'http://localhost:4000',
+    url: '',
     erreurLogin: false
   }),
   methods:

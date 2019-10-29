@@ -87,7 +87,7 @@
 <script>
 export default {
   data: () => ({
-    url: 'http://localhost:4000',
+    url: '',
     m: 0,
     valider: false,
     couleurText: '',
